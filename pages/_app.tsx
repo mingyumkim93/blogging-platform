@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import "styles/globals.css";
+import "styles/globals.scss";
 import Page from "types/Page";
 
 interface AppProps {

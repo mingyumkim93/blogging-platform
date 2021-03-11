@@ -1,5 +1,5 @@
 import Head from "next/head";
-import styles from "styles/Home.module.css";
+import styles from "styles/Home.module.scss";
 import MyLayout from "components/layouts/MyLayout";
 import Page from "types/Page";
 
