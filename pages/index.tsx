@@ -1,14 +1,18 @@
 import Head from "next/head";
 import styles from "styles/Home.module.css";
+import MyLayout from "components/layouts/MyLayout";
+import Page from "types/Page";
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Blogging platform By Mingyum Kim</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      Home
-    </div>
-  );
-}
+const Home: Page = () => (
+  <div className={styles.container}>
+    <Head>
+      <title>Blogging platform By Mingyum Kim</title>
+      <link rel="icon" href="/favicon.ico" />
+    </Head>
+    Home
+  </div>
+);
+
+Home.layout = MyLayout;
+
+export default Home;
