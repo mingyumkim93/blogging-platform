@@ -1,13 +1,14 @@
-import { FunctionComponent } from "react";
-import Link from "next/link";
+import MyLayout from "components/layouts/MyLayout";
+import Page from "types/Page";
 
-const SignUp: FunctionComponent = () => {
+const SignUp: Page = () => {
   return (
     <>
       <div>Sign up page</div>
-      <Link href="/">Home</Link>
     </>
   );
 };
+
+SignUp.layout = MyLayout;
 
 export default SignUp;

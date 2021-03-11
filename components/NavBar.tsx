@@ -4,7 +4,11 @@ import Link from "next/link";
 const NavBar: FunctionComponent = () => {
   return (
     <div>
-      Blog app
+      <button>
+        <Link href="/">
+          <img src="project.png" alt="Logo" height="30px" />
+        </Link>
+      </button>
       <button>
         <Link href="/sign-in">Sign in</Link>
       </button>
