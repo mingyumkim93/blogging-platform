@@ -1,11 +1,11 @@
 import LayoutProps from "types/LayoutProps";
 import { FunctionComponent } from "react";
-import NavBar from "components/NavBar";
+import Navbar from "components/Navbar";
 
 const MyLayout: FunctionComponent<LayoutProps> = ({ children }) => {
   return (
     <>
-      <NavBar />
+      <Navbar />
       {children}
     </>
   );

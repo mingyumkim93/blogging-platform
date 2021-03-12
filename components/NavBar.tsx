@@ -1,10 +1,10 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
-import styles from "styles/NavBar.module.scss";
+import styles from "styles/Navbar.module.scss";
 
-const NavBar: FunctionComponent = () => {
+const Navbar: FunctionComponent = () => {
   return (
-    <nav className={styles["navBar-container"]}>
+    <nav className={styles["navbar-container"]}>
       <Link href="/">
         <div className={styles["logo"]}>
           <img src="project.png" alt="Logo" height="30px" />
@@ -22,4 +22,4 @@ const NavBar: FunctionComponent = () => {
   );
 };
 
-export default NavBar;
+export default Navbar;
