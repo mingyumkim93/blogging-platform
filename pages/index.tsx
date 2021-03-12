@@ -4,7 +4,7 @@ import MyLayout from "components/layouts/MyLayout";
 import Page from "types/Page";
 
 const Home: Page = () => (
-  <div className={styles.container}>
+  <div className="page-container">
     <Head>
       <title>Blogging platform By Mingyum Kim</title>
       <link rel="icon" href="/favicon.ico" />

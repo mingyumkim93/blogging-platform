@@ -4,13 +4,13 @@ import Page from "types/Page";
 
 const SignIn: Page = () => {
   return (
-    <>
+    <div className="page-container">
       <Head>
         <title>sign-in</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>Sign in page</div>
-    </>
+    </div>
   );
 };
 
