@@ -11,7 +11,6 @@ interface AuthContext {
   signin: (email: string, password: string) => Promise<firebase.User | null>;
   signup: (email: string, password: string) => Promise<firebase.User | null>;
   signout: () => Promise<void>;
-  sendPasswordResetEmail: (email: string) => Promise<boolean>;
 }
 
 if (!firebase.apps.length) {
@@ -21,17 +20,11 @@ if (!firebase.apps.length) {
     projectId: process.env.PROJECT_ID,
     appID: process.env.APP_ID
   });
-  // firebase.initializeApp({
-  //   apiKey: "AIzaSyABXn6BPJ3TGGdxBqAzDqMrJcwBAMm-GF8",
-  //   authDomain: "blogging-platform-18aac.firebaseapp.com",
-  //   projectId: "blogging-platform-18aac",
-  //   appID: "1:367846498727:web:848bef14b1d57eaf52d682"
-  // });
 } else {
-  firebase.app(); // if already initialized, use that one
+  firebase.app();
 }
 
-const authContext = createContext<AuthContext | null>(null);
+const authContext = createContext<AuthContext>({} as AuthContext);
 
 // Provider component that wraps your app and makes auth object ...
 // ... available to any child component that calls useAuth().
@@ -81,25 +74,6 @@ function useProvideAuth() {
       });
   };
 
-  const sendPasswordResetEmail = async (email: string) => {
-    return firebase
-      .auth()
-      .sendPasswordResetEmail(email)
-      .then(() => {
-        return true;
-      });
-  };
-
-  //TODO: Do I need it?
-  // const confirmPasswordReset = async (code, password) => {
-  //   return firebase
-  //     .auth()
-  //     .confirmPasswordReset(code, password)
-  //     .then(() => {
-  //       return true;
-  //     });
-  // };
-
   // Subscribe to user on mount
   // Because this sets state in the callback it will cause any ...
   // ... component that utilizes this hook to re-render with the ...
@@ -122,8 +96,6 @@ function useProvideAuth() {
     user,
     signin,
     signup,
-    signout,
-    sendPasswordResetEmail
-    // confirmPasswordReset
+    signout
   };
 }
