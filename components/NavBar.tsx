@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
 import styles from "styles/Navbar.module.scss";
-import { useAuth } from "auth/use-auth";
+import { useAuth } from "auth/AuthProvider";
 
 const Navbar: FunctionComponent = () => {
   const auth = useAuth();

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import "styles/globals.scss";
 import Page from "types/Page";
-import { ProvideAuth } from "auth/use-auth";
+import { ProvideAuth } from "auth/AuthProvider";
 
 interface AppProps {
   Component: Page;

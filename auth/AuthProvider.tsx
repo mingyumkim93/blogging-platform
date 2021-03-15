@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext, createContext } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from "./firebase";
 
 interface ProvideAuthProps {
   children: JSX.Element;
@@ -11,17 +10,6 @@ interface AuthContext {
   signin: (email: string, password: string) => Promise<firebase.User | null>;
   signup: (email: string, password: string) => Promise<firebase.User | null>;
   signout: () => Promise<void>;
-}
-
-if (!firebase.apps.length) {
-  firebase.initializeApp({
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.AUTH_DOMAIN,
-    projectId: process.env.PROJECT_ID,
-    appID: process.env.APP_ID
-  });
-} else {
-  firebase.app();
 }
 
 const authContext = createContext<AuthContext>({} as AuthContext);
