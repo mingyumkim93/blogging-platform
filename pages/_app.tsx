@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import "styles/globals.scss";
 import Page from "types/Page";
-import { ProvideAuth } from "auth/AuthProvider";
+import { ProvideFirebase } from "lib/firebase/FirebaseProvider";
 
 interface AppProps {
   Component: Page;
@@ -12,11 +12,11 @@ const MyApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => {
   const Layout = Component.layout ? Component.layout : React.Fragment;
 
   return (
-    <ProvideAuth>
+    <ProvideFirebase>
       <Layout>
         <Component {...pageProps} />
       </Layout>
-    </ProvideAuth>
+    </ProvideFirebase>
   );
 };
 

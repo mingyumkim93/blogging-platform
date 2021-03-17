@@ -1,4 +1,4 @@
-import firestore from "utils/firestore";
+import firestore from "lib/firebase/firebase-admin/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -10,13 +10,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (usersData.some((user) => user.email === email)) {
       res.status(400).end();
     } else {
-      const result = await firestore.collection("users").doc(uid).set({
+      await firestore.collection("users").doc(uid).set({
         email,
         displayName,
         photoURL,
         created: new Date().toISOString()
       });
-      console.log(result);
       res.status(200).json(uid);
     }
   } catch (e) {

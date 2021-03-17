@@ -33,4 +33,4 @@ yarn-error.log*
 # vercel
 .vercel
 next.config.js
-utils/firestore/serviceAccountKey.json
+lib/firebase/firebase-admin/serviceAccountKey.json

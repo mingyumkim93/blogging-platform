@@ -1,10 +1,10 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
 import styles from "styles/Navbar.module.scss";
-import { useAuth } from "auth/AuthProvider";
+import { useFirebase } from "lib/firebase/FirebaseProvider";
 
 const Navbar: FunctionComponent = () => {
-  const auth = useAuth();
+  const auth = useFirebase().auth;
 
   return (
     <nav className={styles["navbar-container"]}>
@@ -20,7 +20,9 @@ const Navbar: FunctionComponent = () => {
             <Link href="/sign-in">Sign in</Link>
           </div>
         ) : (
-          <div>Sign out</div>
+          <div className={styles["button"]} onClick={() => auth.signout()}>
+            <Link href="/">Sign out</Link>
+          </div>
         )}
 
         <div className={styles["button"]}>

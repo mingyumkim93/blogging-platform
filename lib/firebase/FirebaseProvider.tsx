@@ -1,38 +1,43 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import firebase from "./firebase";
 
-interface ProvideAuthProps {
+interface FirebaseProviderProps {
   children: JSX.Element;
 }
 
-interface AuthContext {
-  user: firebase.User | null;
-  signin: (email: string, password: string) => Promise<firebase.User | null>;
-  signup: (email: string, password: string) => Promise<firebase.User | null>;
-  signout: () => Promise<void>;
+interface FirebaseContext {
+  auth: {
+    user: firebase.User | null;
+    signin: (email: string, password: string) => Promise<firebase.User | null>;
+    signup: (email: string, password: string) => Promise<firebase.User | null>;
+    signout: () => Promise<void>;
+  };
+  storage: {
+    addPhoto: (
+      uid: string,
+      photo: File
+    ) => Promise<firebase.storage.UploadTaskSnapshot>;
+  };
 }
 
-const authContext = createContext<AuthContext>({} as AuthContext);
+const firebaseContext = createContext<FirebaseContext>({} as FirebaseContext);
 
-// Provider component that wraps your app and makes auth object ...
-// ... available to any child component that calls useAuth().
-export function ProvideAuth({ children }: ProvideAuthProps) {
-  const auth = useProvideAuth();
-  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+export function ProvideFirebase({ children }: FirebaseProviderProps) {
+  const firebase = useProvideFirebase();
+  return (
+    <firebaseContext.Provider value={firebase}>
+      {children}
+    </firebaseContext.Provider>
+  );
 }
 
-// Hook for child components to get the auth object ...
-// ... and re-render when it changes.
-export const useAuth = () => {
-  return useContext(authContext);
+export const useFirebase = () => {
+  return useContext(firebaseContext);
 };
 
-// Provider hook that creates auth object and handles state
-function useProvideAuth() {
+function useProvideFirebase() {
   const [user, setUser] = useState<firebase.User | null>(null);
 
-  // Wrap any Firebase methods we want to use making sure ...
-  // ... to save the user to state.
   const signin = async (email: string, password: string) => {
     return firebase
       .auth()
@@ -62,6 +67,15 @@ function useProvideAuth() {
       });
   };
 
+  const addPhoto = async (uid: string, photo: File) => {
+    return firebase
+      .storage()
+      .ref("photos")
+      .child("profile")
+      .child(uid)
+      .put(photo);
+  };
+
   // Subscribe to user on mount
   // Because this sets state in the callback it will cause any ...
   // ... component that utilizes this hook to re-render with the ...
@@ -79,11 +93,15 @@ function useProvideAuth() {
     return () => unsubscribe();
   }, []);
 
-  // Return the user object and auth methods
   return {
-    user,
-    signin,
-    signup,
-    signout
+    auth: {
+      user,
+      signin,
+      signup,
+      signout
+    },
+    storage: {
+      addPhoto
+    }
   };
 }
