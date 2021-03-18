@@ -8,6 +8,7 @@ interface FirebaseProviderProps {
 interface FirebaseContext {
   auth: {
     user: firebase.User | null;
+    loading: boolean;
     signin: (email: string, password: string) => Promise<firebase.User | null>;
     signup: (email: string, password: string) => Promise<firebase.User | null>;
     signout: () => Promise<void>;
@@ -37,6 +38,7 @@ export const useFirebase = () => {
 
 function useProvideFirebase() {
   const [user, setUser] = useState<firebase.User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const signin = async (email: string, password: string) => {
     return firebase
@@ -82,6 +84,8 @@ function useProvideFirebase() {
   // ... latest auth object.
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      setLoading(false);
+
       if (user) {
         setUser(user);
       } else {
@@ -96,6 +100,7 @@ function useProvideFirebase() {
   return {
     auth: {
       user,
+      loading,
       signin,
       signup,
       signout

@@ -5,7 +5,11 @@ import { useFirebase } from "lib/firebase/FirebaseProvider";
 
 const Navbar: FunctionComponent = () => {
   const auth = useFirebase().auth;
+  const { user, loading } = auth;
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <nav className={styles["navbar-container"]}>
       <Link href="/">
@@ -15,19 +19,20 @@ const Navbar: FunctionComponent = () => {
       </Link>
 
       <div className={styles["button-container"]}>
-        {!auth!.user ? (
-          <div className={styles["button"]}>
-            <Link href="/sign-in">Sign in</Link>
-          </div>
+        {!user ? (
+          <>
+            <div className={styles["button"]}>
+              <Link href="/sign-in">Sign in</Link>
+            </div>
+            <div className={styles["button"]}>
+              <Link href="/sign-up">Sign up</Link>
+            </div>
+          </>
         ) : (
           <div className={styles["button"]} onClick={() => auth.signout()}>
             <Link href="/">Sign out</Link>
           </div>
         )}
-
-        <div className={styles["button"]}>
-          <Link href="/sign-up">Sign up</Link>
-        </div>
       </div>
     </nav>
   );
