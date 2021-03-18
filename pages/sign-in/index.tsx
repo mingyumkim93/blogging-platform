@@ -25,8 +25,16 @@ const SignIn: Page = () => {
         <title>sign-in</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <input type="text" onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" onChange={(e) => setPassword(e.target.value)} />
+      <input
+        type="text"
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+      />
+      <input
+        type="password"
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+      />
       <button onClick={() => signin()}>Sign in</button>
     </div>
   );

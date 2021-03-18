@@ -4,6 +4,7 @@ import Page from "types/Page";
 import { useState } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
 import axios from "axios";
+import styles from "styles/SignUp.module.scss";
 
 const SignUp: Page = () => {
   const auth = useFirebase().auth;
@@ -57,10 +58,23 @@ const SignUp: Page = () => {
         <title>sign-up</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <input type="text" onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" onChange={(e) => setPassword(e.target.value)} />
-      <input type="text" onChange={(e) => setDisplayName(e.target.value)} />
       <input
+        type="text"
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+      />
+      <input
+        type="password"
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+      />
+      <input
+        type="text"
+        onChange={(e) => setDisplayName(e.target.value)}
+        placeholder="Name"
+      />
+      <input
+        className={styles["image-input"]}
         type="file"
         id="image-input"
         accept=".jpg, .jpeg, .png"
