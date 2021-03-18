@@ -4,12 +4,8 @@ import styles from "styles/Navbar.module.scss";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
 
 const Navbar: FunctionComponent = () => {
-  const auth = useFirebase().auth;
-  const { user, loading } = auth;
+  const { user, signout } = useFirebase().auth;
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   return (
     <nav className={styles["navbar-container"]}>
       <Link href="/">
@@ -29,7 +25,7 @@ const Navbar: FunctionComponent = () => {
             </div>
           </>
         ) : (
-          <div className={styles["button"]} onClick={() => auth.signout()}>
+          <div className={styles["button"]} onClick={() => signout()}>
             <Link href="/">Sign out</Link>
           </div>
         )}

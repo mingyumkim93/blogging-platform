@@ -5,10 +5,12 @@ import { useState } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
 import axios from "axios";
 import styles from "styles/SignUp.module.scss";
+import { useRouter } from "next/router";
 
 const SignUp: Page = () => {
-  const auth = useFirebase().auth;
-  const storage = useFirebase().storage;
+  const { auth, storage } = useFirebase();
+  const { user, signup } = auth;
+  const router = useRouter();
 
   //TODO: validate
   const [email, setEmail] = useState("");
@@ -18,19 +20,23 @@ const SignUp: Page = () => {
   const [photoPreviewData, setPhotoPreviewData] = useState("");
 
   async function submitSignUp() {
-    const user = await auth.signup(email, password);
-    if (user) {
+    const registeredUser = await signup(email, password);
+    if (registeredUser) {
       if (photo) {
-        const snapshot = await storage.addPhoto(user.uid, photo);
+        const snapshot = await storage.addPhoto(registeredUser.uid, photo);
         const downloadURL = (await snapshot.ref.getDownloadURL()) as string;
         axios.post("/api/users", {
-          uid: user.uid,
+          uid: registeredUser.uid,
           email,
           displayName,
           photoURL: downloadURL
         });
-        await user.updateProfile({ displayName, photoURL: downloadURL });
+        await registeredUser.updateProfile({
+          displayName,
+          photoURL: downloadURL
+        });
       }
+      router.push("/");
     }
   }
 
@@ -52,6 +58,10 @@ const SignUp: Page = () => {
     }
   }
 
+  if (user) {
+    router.push("/");
+    return <></>;
+  }
   return (
     <div className="page-container">
       <Head>
