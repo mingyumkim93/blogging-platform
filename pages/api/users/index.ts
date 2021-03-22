@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { uid, email, displayName, photoURL } = req.body;
+    const { uid, email, displayName } = req.body;
     const users = await firestore.collection("users").get();
     const usersData = users.docs.map((user) => user.data());
 
@@ -13,7 +13,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       await firestore.collection("users").doc(uid).set({
         email,
         displayName,
-        photoURL,
         created: new Date().toISOString()
       });
       res.status(200).json(uid);
