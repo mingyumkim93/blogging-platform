@@ -55,6 +55,8 @@ function useProvideFirebase() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const router = useRouter();
+
   const formatUser = (user: firebase.User): User => {
     return {
       uid: user.uid,
@@ -81,6 +83,7 @@ function useProvideFirebase() {
       .signInWithEmailAndPassword(email, password)
       .then((response) => {
         handleUser(response.user);
+        router.back();
       })
       .catch((err: FirebaseAuthError) => {
         return err;
@@ -94,6 +97,7 @@ function useProvideFirebase() {
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then((response) => {
         handleUser(response.user);
+        router.back();
       });
   };
 
@@ -103,6 +107,7 @@ function useProvideFirebase() {
       .createUserWithEmailAndPassword(email, password)
       .then((response) => {
         handleUser(response.user);
+        router.back();
       })
       .catch((err: FirebaseAuthError) => {
         return err;
