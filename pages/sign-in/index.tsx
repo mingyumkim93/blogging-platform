@@ -6,16 +6,17 @@ import { useFirebase } from "lib/firebase/FirebaseProvider";
 import { useRouter } from "next/router";
 
 const SignIn: Page = () => {
-  const { user, signin } = useFirebase().auth;
+  const { user, signin, signinWithGoogle } = useFirebase().auth;
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSignIn() {
-    signin(email, password)
-      .then(() => router.push("/"))
-      .catch((err) => console.log(err));
+  async function handleSignIn() {
+    const authError = await signin(email, password);
+    if (authError) {
+      alert(authError.message);
+    }
   }
 
   if (user) {
@@ -40,6 +41,7 @@ const SignIn: Page = () => {
         placeholder="Password"
       />
       <button onClick={() => handleSignIn()}>Sign in</button>
+      <button onClick={() => signinWithGoogle()}>Sign in with Google</button>
     </div>
   );
 };

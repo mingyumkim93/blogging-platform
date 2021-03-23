@@ -16,15 +16,9 @@ const SignUp: Page = () => {
   const [displayName, setDisplayName] = useState("");
 
   async function signUp() {
-    const registeredUser = await auth.signup(email, password);
-    if (registeredUser) {
-      await axios.post("/api/users", {
-        uid: registeredUser.uid,
-        email,
-        displayName
-      });
-      await registeredUser.updateProfile({ displayName });
-      router.push("/");
+    const authError = await auth.signup(email, password);
+    if (authError) {
+      alert(authError.message);
     }
   }
 
@@ -32,6 +26,7 @@ const SignUp: Page = () => {
     router.push("/");
     return <></>;
   }
+
   return (
     <div className="page-container">
       <Head>

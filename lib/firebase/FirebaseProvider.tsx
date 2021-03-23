@@ -1,5 +1,7 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import firebase from "./firebase";
+import User from "types/User";
+import { useRouter } from "next/router";
 
 interface FirebaseProviderProps {
   children: JSX.Element;
@@ -7,10 +9,17 @@ interface FirebaseProviderProps {
 
 interface FirebaseContext {
   auth: {
-    user: firebase.User | null;
+    user: User | null;
     loading: boolean;
-    signin: (email: string, password: string) => Promise<firebase.User | null>;
-    signup: (email: string, password: string) => Promise<firebase.User | null>;
+    signin: (
+      email: string,
+      password: string
+    ) => Promise<void | FirebaseAuthError>;
+    signinWithGoogle: () => Promise<void | FirebaseAuthError>;
+    signup: (
+      email: string,
+      password: string
+    ) => Promise<void | FirebaseAuthError>;
     signout: () => Promise<void>;
   };
   storage: {
@@ -19,6 +28,12 @@ interface FirebaseContext {
       photo: File
     ) => Promise<firebase.storage.UploadTaskSnapshot>;
   };
+}
+
+//TODO: Think about its location
+interface FirebaseAuthError {
+  code: string;
+  message: string;
 }
 
 const firebaseContext = createContext<FirebaseContext>({} as FirebaseContext);
@@ -37,16 +52,48 @@ export const useFirebase = () => {
 };
 
 function useProvideFirebase() {
-  const [user, setUser] = useState<firebase.User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const formatUser = (user: firebase.User): User => {
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      provider: user.providerData[0] ? user.providerData[0].providerId : null,
+      photoURL: user.photoURL
+    };
+  };
+
+  const handleUser = (rawUser: firebase.User | null) => {
+    if (rawUser) {
+      const user = formatUser(rawUser);
+      setUser(user);
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  };
 
   const signin = async (email: string, password: string) => {
     return firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((response) => {
-        setUser(response.user);
-        return response.user;
+        handleUser(response.user);
+      })
+      .catch((err: FirebaseAuthError) => {
+        return err;
+      });
+  };
+
+  const signinWithGoogle = async () => {
+    setLoading(true);
+    return firebase
+      .auth()
+      .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then((response) => {
+        handleUser(response.user);
       });
   };
 
@@ -55,8 +102,10 @@ function useProvideFirebase() {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((response) => {
-        setUser(response.user);
-        return response.user;
+        handleUser(response.user);
+      })
+      .catch((err: FirebaseAuthError) => {
+        return err;
       });
   };
 
@@ -83,15 +132,7 @@ function useProvideFirebase() {
   // ... component that utilizes this hook to re-render with the ...
   // ... latest auth object.
   useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      setLoading(false);
-
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
+    const unsubscribe = firebase.auth().onIdTokenChanged(handleUser);
 
     // Cleanup subscription on unmount
     return () => unsubscribe();
@@ -102,6 +143,7 @@ function useProvideFirebase() {
       user,
       loading,
       signin,
+      signinWithGoogle,
       signup,
       signout
     },
