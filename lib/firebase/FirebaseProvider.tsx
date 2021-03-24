@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, createContext } from "react";
 import firebase from "./firebase";
 import User from "types/User";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 interface FirebaseProviderProps {
   children: JSX.Element;
@@ -18,7 +19,8 @@ interface FirebaseContext {
     signinWithGoogle: () => Promise<void | FirebaseAuthError>;
     signup: (
       email: string,
-      password: string
+      password: string,
+      displayName: string
     ) => Promise<void | FirebaseAuthError>;
     signout: () => Promise<void>;
   };
@@ -77,6 +79,13 @@ function useProvideFirebase() {
     setLoading(false);
   };
 
+  const saveUser = (rawUser: firebase.User | null) => {
+    if (rawUser) {
+      const user = formatUser(rawUser);
+      return axios.post("/api/users", user).catch((err) => alert(err));
+    }
+  };
+
   const signin = async (email: string, password: string) => {
     return firebase
       .auth()
@@ -95,18 +104,25 @@ function useProvideFirebase() {
     return firebase
       .auth()
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-      .then((response) => {
+      .then(async (response) => {
         handleUser(response.user);
+        await saveUser(response.user);
         router.back();
       });
   };
 
-  const signup = async (email: string, password: string) => {
+  const signup = async (
+    email: string,
+    password: string,
+    displayName: string
+  ) => {
     return firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then((response) => {
+      .then(async (response) => {
+        await response.user?.updateProfile({ displayName });
         handleUser(response.user);
+        await saveUser(response.user);
         router.back();
       })
       .catch((err: FirebaseAuthError) => {

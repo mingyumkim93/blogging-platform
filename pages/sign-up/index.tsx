@@ -16,7 +16,7 @@ const SignUp: Page = () => {
   const [displayName, setDisplayName] = useState("");
 
   async function signUp() {
-    const authError = await auth.signup(email, password);
+    const authError = await auth.signup(email, password, displayName);
     if (authError) {
       alert(authError.message);
     }
