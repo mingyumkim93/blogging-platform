@@ -23,6 +23,12 @@ interface FirebaseContext {
       displayName: string
     ) => Promise<void | FirebaseAuthError>;
     signout: () => Promise<void>;
+    updateDisplayName: (displayName: string) => Promise<void>;
+    updatePassword: (
+      currentPassword: string,
+      newPassword: string
+    ) => Promise<void>;
+    updateProfilePhoto: (photo: File | null) => Promise<void>;
   };
   storage: {
     addPhoto: (
@@ -79,10 +85,19 @@ function useProvideFirebase() {
     setLoading(false);
   };
 
-  const saveUser = (rawUser: firebase.User | null) => {
+  const saveUserInDB = (rawUser: firebase.User | null) => {
     if (rawUser) {
       const user = formatUser(rawUser);
       return axios.post("/api/users", user).catch((err) => alert(err));
+    }
+  };
+
+  const updateUserInDB = (rawUser: firebase.User | null) => {
+    if (rawUser) {
+      const user = formatUser(rawUser);
+      return axios
+        .put(`/api/users/${user.uid}`, user)
+        .catch((err) => alert(err));
     }
   };
 
@@ -106,7 +121,7 @@ function useProvideFirebase() {
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then(async (response) => {
         handleUser(response.user);
-        await saveUser(response.user);
+        await saveUserInDB(response.user);
         router.back();
       });
   };
@@ -122,7 +137,7 @@ function useProvideFirebase() {
       .then(async (response) => {
         await response.user?.updateProfile({ displayName });
         handleUser(response.user);
-        await saveUser(response.user);
+        await saveUserInDB(response.user);
         router.back();
       })
       .catch((err: FirebaseAuthError) => {
@@ -137,6 +152,57 @@ function useProvideFirebase() {
       .then(() => {
         setUser(null);
       });
+  };
+
+  const updateDisplayName = async (displayName: string) => {
+    return firebase
+      .auth()
+      .currentUser?.updateProfile({ displayName })
+      .then(() => {
+        handleUser(firebase.auth().currentUser);
+        updateUserInDB(firebase.auth().currentUser);
+      });
+  };
+
+  const updatePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ) => {
+    const user = firebase.auth().currentUser;
+    const credential = firebase.auth.EmailAuthProvider.credential(
+      user?.email!,
+      currentPassword
+    );
+    const userCredential = await user
+      ?.reauthenticateWithCredential(credential)
+      .catch(() => alert("Invalid password!"));
+    if (userCredential) {
+      return firebase
+        .auth()
+        .currentUser?.updatePassword(newPassword)
+        .then(() => alert("Password updated!"))
+        .catch((err) => alert(err));
+    }
+  };
+
+  const updateProfilePhoto = async (photo: File | null) => {
+    const user = firebase.auth().currentUser;
+    const storageRef = firebase.storage().ref(`photos/profile/${user!.uid}`);
+    //delete photo
+    if (photo) {
+      await storageRef.put(photo);
+      const photoURL = (await storageRef.getDownloadURL()) as string;
+      return user?.updateProfile({ photoURL }).then(() => {
+        handleUser(firebase.auth().currentUser);
+        updateUserInDB(firebase.auth().currentUser);
+      });
+    } else if (!photo && user?.photoURL) {
+      await storageRef.delete();
+      return user?.updateProfile({ photoURL: null }).then(() => {
+        handleUser(firebase.auth().currentUser);
+        updateUserInDB(firebase.auth().currentUser);
+      });
+    }
   };
 
   const addPhoto = async (uid: string, photo: File) => {
@@ -166,7 +232,10 @@ function useProvideFirebase() {
       signin,
       signinWithGoogle,
       signup,
-      signout
+      signout,
+      updateDisplayName,
+      updatePassword,
+      updateProfilePhoto
     },
     storage: {
       addPhoto
