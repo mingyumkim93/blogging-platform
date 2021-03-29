@@ -1,8 +1,6 @@
 import Head from "next/head";
-import styles from "styles/Home.module.scss";
-import MyLayout from "components/layouts/MyLayout";
+import AppBarLayout from "components/layouts/AppBarLayout";
 import Page from "types/Page";
-import Link from "next/link";
 
 const Home: Page = () => (
   <div className="page-container">
@@ -11,10 +9,9 @@ const Home: Page = () => (
       <link rel="icon" href="/favicon.ico" />
     </Head>
     Home
-    <Link href="/profile">My profile</Link>
   </div>
 );
 
-Home.layout = MyLayout;
+Home.layout = AppBarLayout;
 
 export default Home;

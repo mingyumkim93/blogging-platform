@@ -1,9 +1,8 @@
 import Head from "next/head";
-import MyLayout from "components/layouts/MyLayout";
+import AppBarLayout from "components/layouts/AppBarLayout";
 import Page from "types/Page";
 import { useState } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
-import axios from "axios";
 import { useRouter } from "next/router";
 
 const SignUp: Page = () => {
@@ -53,6 +52,6 @@ const SignUp: Page = () => {
   );
 };
 
-SignUp.layout = MyLayout;
+SignUp.layout = AppBarLayout;
 
 export default SignUp;

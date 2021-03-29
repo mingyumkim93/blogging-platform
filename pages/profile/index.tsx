@@ -1,5 +1,5 @@
 import Head from "next/head";
-import MyLayout from "components/layouts/MyLayout";
+import AppBarLayout from "components/layouts/AppBarLayout";
 import CustomListItem from "components/CustomListItem";
 import Page from "types/Page";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
@@ -59,6 +59,6 @@ const Profile: Page = () => {
   }
 };
 
-Profile.layout = MyLayout;
+Profile.layout = AppBarLayout;
 
 export default Profile;

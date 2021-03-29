@@ -1,5 +1,5 @@
 import Head from "next/head";
-import MyLayout from "components/layouts/MyLayout";
+import AppBarLayout from "components/layouts/AppBarLayout";
 import Page from "types/Page";
 import { useState } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
@@ -46,6 +46,6 @@ const SignIn: Page = () => {
   );
 };
 
-SignIn.layout = MyLayout;
+SignIn.layout = AppBarLayout;
 
 export default SignIn;
