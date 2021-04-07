@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -10,6 +11,7 @@ import Avatar from "@material-ui/core/Avatar";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import Button from "@material-ui/core/Button";
+import BlogCreateDialog from "components/BlogCreateDialog";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,21 +33,33 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Navbar: FunctionComponent = () => {
   const classes = useStyles();
+  const router = useRouter();
   const { user, signout } = useFirebase().auth;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [blogCreateDialogOpen, setBlogCreateDialogOpen] = useState(false);
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+  function handleMenu(event: React.MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
-  };
+    setMenuOpen(true);
+  }
 
-  const handleClose = () => {
+  function handleClose() {
     setAnchorEl(null);
-  };
+    setMenuOpen(false);
+  }
 
   function handleSignOut() {
     signout();
     handleClose();
+  }
+
+  async function handleMyBlogClick() {
+    setMenuOpen(false);
+    if (!user?.blogName) setBlogCreateDialogOpen(true);
+    else {
+      router.push(`/blog/${user.blogName}`);
+    }
   }
 
   return (
@@ -57,7 +71,7 @@ const Navbar: FunctionComponent = () => {
               edge="start"
               className={classes.menuButton}
               color="inherit">
-              <img color="white" src="logo.png" height="30px" />
+              <img color="white" src="/logo.png" height="30px" />
             </IconButton>
           </Link>
 
@@ -89,11 +103,12 @@ const Navbar: FunctionComponent = () => {
                   vertical: "top",
                   horizontal: "right"
                 }}
-                open={open}
+                open={menuOpen}
                 onClose={handleClose}>
                 <MenuItem onClick={handleClose}>
                   <Link href="/profile">Profile</Link>
                 </MenuItem>
+                <MenuItem onClick={handleMyBlogClick}>My blog</MenuItem>
                 <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
               </Menu>
             </div>
@@ -110,6 +125,10 @@ const Navbar: FunctionComponent = () => {
           )}
         </Toolbar>
       </AppBar>
+      <BlogCreateDialog
+        open={blogCreateDialogOpen}
+        setOpen={setBlogCreateDialogOpen}
+      />
     </div>
   );
 };

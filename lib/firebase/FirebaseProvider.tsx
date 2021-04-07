@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, createContext } from "react";
 import firebase from "./firebase";
 import User from "types/User";
 import { useRouter } from "next/router";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 interface FirebaseProviderProps {
   children: JSX.Element;
@@ -29,6 +29,9 @@ interface FirebaseContext {
       newPassword: string
     ) => Promise<void>;
     updateProfilePhoto: (photo: File | null) => Promise<void>;
+  };
+  db: {
+    createBlog: (blogName: string) => Promise<AxiosResponse>;
   };
   storage: {
     addPhoto: (
@@ -65,7 +68,7 @@ function useProvideFirebase() {
 
   const router = useRouter();
 
-  const formatUser = (user: firebase.User): User => {
+  function formatUser(user: firebase.User): User {
     return {
       uid: user.uid,
       email: user.email,
@@ -73,35 +76,43 @@ function useProvideFirebase() {
       provider: user.providerData[0] ? user.providerData[0].providerId : null,
       photoURL: user.photoURL
     };
-  };
+  }
 
-  const handleUser = (rawUser: firebase.User | null) => {
+  async function getBlogName(uid: string) {
+    const blogName = (
+      await axios.get("/api/blogs/get-blog", { params: { uid } })
+    ).data.name;
+    return blogName as string;
+  }
+
+  async function handleUser(rawUser: firebase.User | null) {
     if (rawUser) {
       const user = formatUser(rawUser);
-      setUser(user);
+      const blogName = await getBlogName(user.uid);
+      setUser({ ...user, blogName });
     } else {
       setUser(null);
     }
     setLoading(false);
-  };
+  }
 
-  const saveUserInDB = (rawUser: firebase.User | null) => {
+  function saveUserInDB(rawUser: firebase.User | null) {
     if (rawUser) {
       const user = formatUser(rawUser);
       return axios.post("/api/users", user).catch((err) => alert(err));
     }
-  };
+  }
 
-  const updateUserInDB = (rawUser: firebase.User | null) => {
+  function updateUserInDB(rawUser: firebase.User | null) {
     if (rawUser) {
       const user = formatUser(rawUser);
       return axios
         .put(`/api/users/${user.uid}`, user)
         .catch((err) => alert(err));
     }
-  };
+  }
 
-  const signin = async (email: string, password: string) => {
+  async function signin(email: string, password: string) {
     return firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -112,9 +123,9 @@ function useProvideFirebase() {
       .catch((err: FirebaseAuthError) => {
         return err;
       });
-  };
+  }
 
-  const signinWithGoogle = async () => {
+  async function signinWithGoogle() {
     setLoading(true);
     return firebase
       .auth()
@@ -124,13 +135,9 @@ function useProvideFirebase() {
         await saveUserInDB(response.user);
         router.back();
       });
-  };
+  }
 
-  const signup = async (
-    email: string,
-    password: string,
-    displayName: string
-  ) => {
+  async function signup(email: string, password: string, displayName: string) {
     return firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
@@ -143,18 +150,18 @@ function useProvideFirebase() {
       .catch((err: FirebaseAuthError) => {
         return err;
       });
-  };
+  }
 
-  const signout = async () => {
+  async function signout() {
     return firebase
       .auth()
       .signOut()
       .then(() => {
         setUser(null);
       });
-  };
+  }
 
-  const updateDisplayName = async (displayName: string) => {
+  async function updateDisplayName(displayName: string) {
     return firebase
       .auth()
       .currentUser?.updateProfile({ displayName })
@@ -162,12 +169,9 @@ function useProvideFirebase() {
         handleUser(firebase.auth().currentUser);
         updateUserInDB(firebase.auth().currentUser);
       });
-  };
+  }
 
-  const updatePassword = async (
-    currentPassword: string,
-    newPassword: string
-  ) => {
+  async function updatePassword(currentPassword: string, newPassword: string) {
     const user = firebase.auth().currentUser;
     const credential = firebase.auth.EmailAuthProvider.credential(
       user?.email!,
@@ -183,9 +187,9 @@ function useProvideFirebase() {
         .then(() => alert("Password updated!"))
         .catch((err) => alert(err));
     }
-  };
+  }
 
-  const updateProfilePhoto = async (photo: File | null) => {
+  async function updateProfilePhoto(photo: File | null) {
     const user = firebase.auth().currentUser;
     const storageRef = firebase.storage().ref(`photos/profile/${user!.uid}`);
     //delete photo
@@ -203,16 +207,20 @@ function useProvideFirebase() {
         updateUserInDB(firebase.auth().currentUser);
       });
     }
-  };
+  }
 
-  const addPhoto = async (uid: string, photo: File) => {
+  async function addPhoto(uid: string, photo: File) {
     return firebase
       .storage()
       .ref("photos")
       .child("profile")
       .child(uid)
       .put(photo);
-  };
+  }
+
+  async function createBlog(blogName: string) {
+    return axios.post("/api/blogs", { uid: user?.uid, blogName });
+  }
 
   // Subscribe to user on mount
   // Because this sets state in the callback it will cause any ...
@@ -237,6 +245,7 @@ function useProvideFirebase() {
       updatePassword,
       updateProfilePhoto
     },
+    db: { createBlog },
     storage: {
       addPhoto
     }

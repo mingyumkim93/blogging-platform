@@ -9,10 +9,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const users = await usersRef.get();
     const usersData = users.docs.map((user) => user.data());
 
+    //TODO: follow blog's index way if it works fine
     if (usersData.some((user) => user.email === email)) {
-      res.status(200).json(uid);
+      res.status(403).json({ message: `Email: ${email} is already in use!` });
     } else {
       await usersRef.doc(uid).set({
+        uid,
         email,
         displayName,
         photoURL,

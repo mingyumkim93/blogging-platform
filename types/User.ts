@@ -4,4 +4,5 @@ export default interface User {
   displayName: string | null;
   provider: string | null;
   photoURL: string | null;
+  blogName?: string;
 }
