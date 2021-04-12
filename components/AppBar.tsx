@@ -49,17 +49,31 @@ const Navbar: FunctionComponent = () => {
     setMenuOpen(false);
   }
 
+  function handleProfileClick() {
+    handleClose();
+    router.push("/profile");
+  }
+
+  function handleViewMyBlogClick() {
+    handleClose();
+    checkBlogExistAndProceed("/blog/" + user?.blogData?.url);
+  }
+
+  function handleEditMyBlogClick() {
+    handleClose();
+    checkBlogExistAndProceed("/edit-blog");
+  }
+
+  function checkBlogExistAndProceed(route: string) {
+    if (!user?.blogData) setBlogCreateDialogOpen(true);
+    else {
+      router.push(route);
+    }
+  }
+
   function handleSignOut() {
     signout();
     handleClose();
-  }
-
-  async function handleMyBlogClick() {
-    setMenuOpen(false);
-    if (!user?.blogData) setBlogCreateDialogOpen(true);
-    else {
-      router.push("blog/" + user?.blogData.url);
-    }
   }
 
   return (
@@ -105,10 +119,13 @@ const Navbar: FunctionComponent = () => {
                 }}
                 open={menuOpen}
                 onClose={handleClose}>
-                <MenuItem onClick={handleClose}>
-                  <Link href="/profile">Profile</Link>
+                <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
+                <MenuItem onClick={handleViewMyBlogClick}>
+                  View my blog
                 </MenuItem>
-                <MenuItem onClick={handleMyBlogClick}>My blog</MenuItem>
+                <MenuItem onClick={handleEditMyBlogClick}>
+                  Edit my blog
+                </MenuItem>
                 <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
               </Menu>
             </div>

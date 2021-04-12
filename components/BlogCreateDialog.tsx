@@ -48,7 +48,7 @@ const BlogCreateDialog: FunctionComponent<Props> = ({ open, setOpen }) => {
     createBlog(blogName, blogUrl)
       .then(() => {
         setOpen(false);
-        router.push("blog/" + blogUrl);
+        router.push("/edit-blog");
       })
       .catch((err) => {
         if (err.response.data.message)
