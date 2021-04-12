@@ -17,22 +17,38 @@ interface Props {
 
 const useStyles = makeStyles((theme: Theme) => createStyles({}));
 
-const Navbar: FunctionComponent<Props> = ({ open, setOpen }) => {
-  const classes = useStyles();
+const BlogCreateDialog: FunctionComponent<Props> = ({ open, setOpen }) => {
   const { createBlog } = useFirebase().db;
   const [blogName, setBlogName] = useState("");
+  const [blogUrl, setBlogUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
-  function handleClose() {
+  function handleBlogUrlInput(blogUrl: string) {
+    const formatted = blogUrl
+      .toLocaleLowerCase()
+      .replace(/[^a-z0-9\- ]/g, "")
+      .replaceAll(" ", "-")
+      .replaceAll("--", "-");
+    setBlogUrl(formatted);
+    setErrorMessage("");
+
+    if (formatted.startsWith("-") || formatted.endsWith("-")) {
+      setErrorMessage("URL should not start or end with hyphen.");
+    }
+  }
+
+  function handleCancle() {
+    setBlogName("");
+    setBlogUrl("");
     setOpen(false);
   }
 
   async function handleCreate() {
-    createBlog(blogName)
+    createBlog(blogName, blogUrl)
       .then(() => {
         setOpen(false);
-        router.push(`/blogs/${blogName}`);
+        router.push("blog/" + blogUrl);
       })
       .catch((err) => {
         if (err.response.data.message)
@@ -48,18 +64,23 @@ const Navbar: FunctionComponent<Props> = ({ open, setOpen }) => {
           It seems you don't have your own blog yet. Create one!
         </DialogContentText>
         <TextField
-          error={errorMessage.length > 0}
-          helperText={errorMessage}
           label="Blog name"
           onChange={(e) => setBlogName(e.target.value)}
         />
+        <TextField
+          error={errorMessage.length > 0}
+          helperText={errorMessage}
+          label="Blog URL"
+          value={blogUrl}
+          onChange={(e) => handleBlogUrlInput(e.target.value)}
+        />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={handleCancle} color="primary">
           Cancel
         </Button>
         <Button
-          disabled={blogName.length === 0}
+          disabled={blogName.length === 0 || blogUrl.length === 0}
           onClick={handleCreate}
           color="primary">
           Create
@@ -69,4 +90,4 @@ const Navbar: FunctionComponent<Props> = ({ open, setOpen }) => {
   );
 };
 
-export default Navbar;
+export default BlogCreateDialog;

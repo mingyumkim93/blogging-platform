@@ -56,9 +56,9 @@ const Navbar: FunctionComponent = () => {
 
   async function handleMyBlogClick() {
     setMenuOpen(false);
-    if (!user?.blogName) setBlogCreateDialogOpen(true);
+    if (!user?.blogData) setBlogCreateDialogOpen(true);
     else {
-      router.push(`/blog/${user.blogName}`);
+      router.push("blog/" + user?.blogData.url);
     }
   }
 

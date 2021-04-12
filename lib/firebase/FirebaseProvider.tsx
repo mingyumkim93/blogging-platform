@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import firebase from "./firebase";
 import User from "types/User";
+import BlogData from "types/BlogData";
 import { useRouter } from "next/router";
 import axios, { AxiosResponse } from "axios";
 
@@ -31,7 +32,7 @@ interface FirebaseContext {
     updateProfilePhoto: (photo: File | null) => Promise<void>;
   };
   db: {
-    createBlog: (blogName: string) => Promise<AxiosResponse>;
+    createBlog: (blogName: string, blogUrl: string) => Promise<AxiosResponse>;
   };
   storage: {
     addPhoto: (
@@ -78,18 +79,20 @@ function useProvideFirebase() {
     };
   }
 
-  async function getBlogName(uid: string) {
-    const blogName = (
-      await axios.get("/api/blogs/get-blog", { params: { uid } })
-    ).data.name;
-    return blogName as string;
+  async function getMyBlogData(uid: string) {
+    if (uid) {
+      const blogData = (
+        await axios.get("/api/blogs/get-blog", { params: { uid } })
+      ).data as BlogData;
+      return blogData;
+    }
   }
 
   async function handleUser(rawUser: firebase.User | null) {
     if (rawUser) {
       const user = formatUser(rawUser);
-      const blogName = await getBlogName(user.uid);
-      setUser({ ...user, blogName });
+      const blogData = await getMyBlogData(rawUser.uid);
+      setUser({ ...user, blogData });
     } else {
       setUser(null);
     }
@@ -131,8 +134,9 @@ function useProvideFirebase() {
       .auth()
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then(async (response) => {
+        if (response.additionalUserInfo?.isNewUser)
+          await saveUserInDB(response.user);
         handleUser(response.user);
-        await saveUserInDB(response.user);
         router.back();
       });
   }
@@ -218,8 +222,8 @@ function useProvideFirebase() {
       .put(photo);
   }
 
-  async function createBlog(blogName: string) {
-    return axios.post("/api/blogs", { uid: user?.uid, blogName });
+  async function createBlog(blogName: string, blogUrl: string) {
+    return axios.post("/api/blogs", { uid: user?.uid, blogName, blogUrl });
   }
 
   // Subscribe to user on mount
