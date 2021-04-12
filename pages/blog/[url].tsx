@@ -20,7 +20,6 @@ import {
   createStyles
 } from "@material-ui/core/styles";
 import Page from "types/Page";
-import { useFirebase } from "lib/firebase/FirebaseProvider";
 import BlogData from "types/BlogData";
 
 const drawerWidth = 240;
@@ -70,7 +69,6 @@ interface Props {
 const Blog: Page<Props> = ({ blogData }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const { loading } = useFirebase().auth;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeList, setActiveList] = useState(0);
 
@@ -104,10 +102,6 @@ const Blog: Page<Props> = ({ blogData }) => {
       </List>
     </div>
   );
-
-  if (loading) {
-    return <div>loading</div>;
-  }
 
   return (
     <div className={classes.root}>
