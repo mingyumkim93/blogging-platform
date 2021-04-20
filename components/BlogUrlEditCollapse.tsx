@@ -1,12 +1,11 @@
 import { FunctionComponent, useState, useEffect } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
-import Input from "@material-ui/core/Input";
+import TextField from "@material-ui/core/TextField";
 import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
 import CollapseProps from "types/CollapseProps";
-import { TextField } from "@material-ui/core";
 
-const EditBlogUrlCollapse: FunctionComponent<CollapseProps> = ({
+const BlogUrlEditCollapse: FunctionComponent<CollapseProps> = ({
   opened,
   cancel
 }) => {
@@ -51,4 +50,4 @@ const EditBlogUrlCollapse: FunctionComponent<CollapseProps> = ({
   );
 };
 
-export default EditBlogUrlCollapse;
+export default BlogUrlEditCollapse;

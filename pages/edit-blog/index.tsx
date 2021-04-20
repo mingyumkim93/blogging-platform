@@ -7,9 +7,9 @@ import { useRouter } from "next/router";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
 import CustomListItemProps from "types/CustomListItemProps";
-import EditBlogUrlCollapse from "components/EditBlogUrlCollapse";
-import PasswordEditCollapse from "components/PasswordEditCollapse";
-import EditBlogNameCollapse from "components/EditBlogNameCollapse";
+import BlogUrlEditCollapse from "components/BlogUrlEditCollapse";
+import BlogContentsEditCollpase from "components/BlogContentsEditCollapse";
+import BlogNameEditCollapse from "components/BlogNameEditCollapse";
 
 const EditBlog: Page = () => {
   const router = useRouter();
@@ -26,15 +26,19 @@ const EditBlog: Page = () => {
         primary: "Blog name",
         secondary: blogData.name,
         selectable: true,
-        collapse: EditBlogNameCollapse
+        collapse: BlogNameEditCollapse
       },
       {
         primary: "URL",
         secondary: blogData.url,
         selectable: true,
-        collapse: EditBlogUrlCollapse
+        collapse: BlogUrlEditCollapse
       },
-      { primary: "Contents", selectable: true, collapse: PasswordEditCollapse }
+      {
+        primary: "Contents",
+        selectable: true,
+        collapse: BlogContentsEditCollpase
+      }
     ];
 
     return (

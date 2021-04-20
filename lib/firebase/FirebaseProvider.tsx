@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, createContext } from "react";
 import firebase from "./firebase";
 import User from "types/User";
 import BlogData from "types/BlogData";
+import BlogContent from "types/BlogContent";
 import { useRouter } from "next/router";
 import axios, { AxiosResponse } from "axios";
 
@@ -32,6 +33,10 @@ interface FirebaseContext {
     updateProfilePhoto: (photo: File | null) => Promise<void>;
     updateMyBlogName: (newName: string) => Promise<void>;
     updateMyBlogUrl: (newUrl: string) => Promise<void>;
+    updateMyBlogContent: (
+      newContent: BlogContent,
+      index: number
+    ) => Promise<void>;
   };
   db: {
     createBlog: (blogName: string, blogUrl: string) => Promise<AxiosResponse>;
@@ -233,6 +238,16 @@ function useProvideFirebase() {
       .then(() => handleUser(firebase.auth().currentUser));
   }
 
+  async function updateMyBlogContent(newContent: BlogContent, index: number) {
+    return axios
+      .put("/api/blogs/update-blog-content", {
+        newContent,
+        index,
+        uid: user!.uid
+      })
+      .then(() => handleUser(firebase.auth().currentUser));
+  }
+
   async function addPhoto(uid: string, photo: File) {
     return firebase
       .storage()
@@ -269,7 +284,8 @@ function useProvideFirebase() {
       updatePassword,
       updateProfilePhoto,
       updateMyBlogName,
-      updateMyBlogUrl
+      updateMyBlogUrl,
+      updateMyBlogContent
     },
     db: { createBlog },
     storage: {

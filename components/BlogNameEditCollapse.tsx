@@ -5,7 +5,7 @@ import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
 import CollapseProps from "types/CollapseProps";
 
-const EditBlogNameCollapse: FunctionComponent<CollapseProps> = ({
+const BlogNameEditCollapse: FunctionComponent<CollapseProps> = ({
   opened,
   cancel
 }) => {
@@ -36,4 +36,4 @@ const EditBlogNameCollapse: FunctionComponent<CollapseProps> = ({
   );
 };
 
-export default EditBlogNameCollapse;
+export default BlogNameEditCollapse;

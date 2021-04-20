@@ -21,6 +21,7 @@ import {
 } from "@material-ui/core/styles";
 import Page from "types/Page";
 import BlogData from "types/BlogData";
+import { Editor, EditorState, ContentState, convertFromRaw } from "draft-js";
 
 const drawerWidth = 240;
 
@@ -152,9 +153,17 @@ const Blog: Page<Props> = ({ blogData }) => {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography paragraph>
-          {blogData.contents
-            ? Object.values(blogData.contents[activeList])
-            : "No content. Move to edit page."}
+          {blogData.contents ? (
+            <Editor
+              readOnly={true}
+              onChange={() => null}
+              editorState={EditorState.createWithContent(
+                convertFromRaw(Object.values(blogData.contents[activeList])[0])
+              )}
+            />
+          ) : (
+            <></>
+          )}
         </Typography>
       </main>
     </div>

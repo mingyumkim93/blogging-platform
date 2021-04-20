@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect } from "react";
 import "styles/globals.scss";
+import "styles/RichEditor.css";
 import Page from "types/Page";
 import { ProvideFirebase } from "lib/firebase/FirebaseProvider";
 
