@@ -6,7 +6,6 @@ import React, {
   MouseEvent
 } from "react";
 import {
-  Editor,
   EditorState,
   RichUtils,
   getDefaultKeyBinding,
@@ -17,10 +16,40 @@ import {
   ContentBlock,
   DraftHandleValue
 } from "draft-js";
+import Editor, { composeDecorators } from "@draft-js-plugins/editor";
+import createImagePlugin from "@draft-js-plugins/image";
+import createAlignmentPlugin from "@draft-js-plugins/alignment";
+import createFocusPlugin from "@draft-js-plugins/focus";
+import createResizeablePlugin from "@draft-js-plugins/resizeable";
+import createBlockDndPlugin from "@draft-js-plugins/drag-n-drop";
+import createDragNDropUploadPlugin from "@draft-js-plugins/drag-n-drop-upload";
+
+const focusPlugin = createFocusPlugin();
+const resizeablePlugin = createResizeablePlugin({
+  vertical: "absolute",
+  horizontal: "absolute"
+});
+const blockDndPlugin = createBlockDndPlugin();
+const alignmentPlugin = createAlignmentPlugin();
+const { AlignmentTool } = alignmentPlugin;
+
+const decorator = composeDecorators(
+  resizeablePlugin.decorator,
+  alignmentPlugin.decorator,
+  focusPlugin.decorator,
+  blockDndPlugin.decorator
+);
+const imagePlugin = createImagePlugin({ decorator });
+
+const dragNDropFileUploadPlugin = createDragNDropUploadPlugin({
+  handleUpload: () => {},
+  addImage: (editorState, placeholderSrc) =>
+    imagePlugin.addImage(editorState, placeholderSrc as string, {})
+});
 
 interface EditorProps {
-  setContentDraft: (contentState: RawDraftContentState) => void;
-  contentDraft: RawDraftContentState;
+  setRawDraftConentState: (contentState: RawDraftContentState) => void;
+  rawDraftConentState: RawDraftContentState;
 }
 
 // Custom overrides for "code" style.
@@ -34,20 +63,29 @@ const styleMap = {
 };
 
 const RichEditor: FunctionComponent<EditorProps> = ({
-  setContentDraft,
-  contentDraft
+  setRawDraftConentState,
+  rawDraftConentState
 }) => {
   const [editorState, setEditorState] = useState(
-    EditorState.createWithContent(convertFromRaw(contentDraft))
+    EditorState.createWithContent(convertFromRaw(rawDraftConentState))
   );
   const editor = useRef<Editor | null>(null);
+  const plugins = [
+    dragNDropFileUploadPlugin,
+    blockDndPlugin,
+    focusPlugin,
+    alignmentPlugin,
+    resizeablePlugin,
+    imagePlugin
+  ];
+
   function focus() {
     (editor.current as Editor).focus();
   }
 
   function onChange(editorState: EditorState) {
     setEditorState(editorState);
-    setContentDraft(convertToRaw(editorState.getCurrentContent()));
+    setRawDraftConentState(convertToRaw(editorState.getCurrentContent()));
   }
 
   function handleKeyCommand(
@@ -110,6 +148,7 @@ const RichEditor: FunctionComponent<EditorProps> = ({
         }
         onClick={focus}>
         <Editor
+          editorKey="editor"
           blockStyleFn={getBlockStyle}
           customStyleMap={styleMap}
           editorState={editorState}
@@ -118,7 +157,9 @@ const RichEditor: FunctionComponent<EditorProps> = ({
           onChange={onChange}
           ref={editor}
           spellCheck={true}
+          plugins={plugins}
         />
+        <AlignmentTool />
       </div>
     </div>
   );

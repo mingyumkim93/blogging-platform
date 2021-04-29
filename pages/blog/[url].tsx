@@ -21,7 +21,10 @@ import {
 } from "@material-ui/core/styles";
 import Page from "types/Page";
 import BlogData from "types/BlogData";
-import { Editor, EditorState, ContentState, convertFromRaw } from "draft-js";
+import { EditorState, convertFromRaw } from "draft-js";
+import Editor from "@draft-js-plugins/editor";
+import createImagePlugin from "@draft-js-plugins/image";
+import RichEditor from "components/RichEditor";
 
 const drawerWidth = 240;
 
@@ -72,6 +75,7 @@ const Blog: Page<Props> = ({ blogData }) => {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeList, setActiveList] = useState(0);
+  const imagePlugIn = createImagePlugin();
 
   function handleDrawerToggle() {
     setMobileOpen(!mobileOpen);
@@ -152,19 +156,19 @@ const Blog: Page<Props> = ({ blogData }) => {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Typography paragraph>
-          {blogData.contents ? (
-            <Editor
-              readOnly={true}
-              onChange={() => null}
-              editorState={EditorState.createWithContent(
-                convertFromRaw(Object.values(blogData.contents[activeList])[0])
-              )}
-            />
-          ) : (
-            <></>
-          )}
-        </Typography>
+        {blogData.contents ? (
+          <Editor
+            editorKey="editor"
+            readOnly={true}
+            onChange={() => null}
+            editorState={EditorState.createWithContent(
+              convertFromRaw(Object.values(blogData.contents[activeList])[0])
+            )}
+            plugins={[imagePlugIn]}
+          />
+        ) : (
+          <></>
+        )}
       </main>
     </div>
   );

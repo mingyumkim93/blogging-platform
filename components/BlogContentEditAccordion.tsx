@@ -27,10 +27,12 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
   const [contentTitleDraft, setContentTitleDraft] = useState(
     Object.keys(content)[0]
   );
-  const [contentDraft, setContentDraft] = useState(Object.values(content)[0]);
+  const [rawDraftConentState, setRawDraftConentState] = useState(
+    Object.values(content)[0]
+  );
 
   function updateContent(index: number) {
-    updateMyBlogContent({ [contentTitleDraft]: contentDraft }, index);
+    updateMyBlogContent({ [contentTitleDraft]: rawDraftConentState }, index);
     handleAccordionClick(index);
   }
 
@@ -53,8 +55,8 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
       )}
       <AccordionDetails>
         <RichEditor
-          contentDraft={contentDraft}
-          setContentDraft={setContentDraft}
+          rawDraftConentState={rawDraftConentState}
+          setRawDraftConentState={setRawDraftConentState}
         />
       </AccordionDetails>
       <Button onClick={() => updateContent(index)}>Save</Button>

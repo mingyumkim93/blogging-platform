@@ -3,6 +3,9 @@ import "styles/globals.scss";
 import "styles/RichEditor.css";
 import Page from "types/Page";
 import { ProvideFirebase } from "lib/firebase/FirebaseProvider";
+import "node_modules/@draft-js-plugins/alignment/lib/plugin.css";
+import "node_modules/@draft-js-plugins/focus/lib/plugin.css";
+import "node_modules/@draft-js-plugins/image/lib/plugin.css";
 
 interface AppProps {
   Component: Page;
