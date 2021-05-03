@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import RichEditor from "components/RichEditor";
 import BlogContent from "types/BlogContent";
+import { Value } from "@react-page/editor";
 
 interface Props {
   index: number;
@@ -27,12 +28,10 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
   const [contentTitleDraft, setContentTitleDraft] = useState(
     Object.keys(content)[0]
   );
-  const [rawDraftConentState, setRawDraftConentState] = useState(
-    Object.values(content)[0]
-  );
+  const [value, setValue] = useState<Value | null>(Object.values(content)[0]);
 
   function updateContent(index: number) {
-    updateMyBlogContent({ [contentTitleDraft]: rawDraftConentState }, index);
+    updateMyBlogContent({ [contentTitleDraft]: value }, index);
     handleAccordionClick(index);
   }
 
@@ -54,10 +53,7 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
         </AccordionSummary>
       )}
       <AccordionDetails>
-        <RichEditor
-          rawDraftConentState={rawDraftConentState}
-          setRawDraftConentState={setRawDraftConentState}
-        />
+        <RichEditor value={value} setValue={setValue} />
       </AccordionDetails>
       <Button onClick={() => updateContent(index)}>Save</Button>
       <Button onClick={() => handleAccordionClick(index)}>Cancel</Button>

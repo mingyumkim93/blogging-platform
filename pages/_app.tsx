@@ -1,11 +1,10 @@
 import React, { FunctionComponent, useEffect } from "react";
 import "styles/globals.scss";
-import "styles/RichEditor.css";
 import Page from "types/Page";
 import { ProvideFirebase } from "lib/firebase/FirebaseProvider";
-import "node_modules/@draft-js-plugins/alignment/lib/plugin.css";
-import "node_modules/@draft-js-plugins/focus/lib/plugin.css";
-import "node_modules/@draft-js-plugins/image/lib/plugin.css";
+import "node_modules/@react-page/editor/lib/index.css";
+import "node_modules/@react-page/plugins-image/lib/index.css";
+import "styles/RichEditor.css";
 
 interface AppProps {
   Component: Page;

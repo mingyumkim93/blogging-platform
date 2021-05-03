@@ -1,267 +1,40 @@
-import React, {
-  FunctionComponent,
-  useState,
-  useRef,
-  KeyboardEvent,
-  MouseEvent
-} from "react";
-import {
-  EditorState,
-  RichUtils,
-  getDefaultKeyBinding,
-  convertFromRaw,
-  convertToRaw,
-  RawDraftContentState,
-  DraftEditorCommand,
-  ContentBlock,
-  DraftHandleValue
-} from "draft-js";
-import Editor, { composeDecorators } from "@draft-js-plugins/editor";
-import createImagePlugin from "@draft-js-plugins/image";
-import createAlignmentPlugin from "@draft-js-plugins/alignment";
-import createFocusPlugin from "@draft-js-plugins/focus";
-import createResizeablePlugin from "@draft-js-plugins/resizeable";
-import createBlockDndPlugin from "@draft-js-plugins/drag-n-drop";
-import createDragNDropUploadPlugin from "@draft-js-plugins/drag-n-drop-upload";
-
-const focusPlugin = createFocusPlugin();
-const resizeablePlugin = createResizeablePlugin({
-  vertical: "absolute",
-  horizontal: "absolute"
-});
-const blockDndPlugin = createBlockDndPlugin();
-const alignmentPlugin = createAlignmentPlugin();
-const { AlignmentTool } = alignmentPlugin;
-
-const decorator = composeDecorators(
-  resizeablePlugin.decorator,
-  alignmentPlugin.decorator,
-  focusPlugin.decorator,
-  blockDndPlugin.decorator
-);
-const imagePlugin = createImagePlugin({ decorator });
-
-const dragNDropFileUploadPlugin = createDragNDropUploadPlugin({
-  handleUpload: () => {},
-  addImage: (editorState, placeholderSrc) =>
-    imagePlugin.addImage(editorState, placeholderSrc as string, {})
-});
+import React, { FunctionComponent, Dispatch, SetStateAction } from "react";
+import type { Value, CellSpacing, CellPlugin } from "@react-page/editor";
+import Editor from "@react-page/editor";
+import slate from "@react-page/plugins-slate";
+import image from "@react-page/plugins-image";
+import video from "@react-page/plugins-video";
 
 interface EditorProps {
-  setRawDraftConentState: (contentState: RawDraftContentState) => void;
-  rawDraftConentState: RawDraftContentState;
+  value: Value | null;
+  readOnly?: boolean;
+  setValue?: Dispatch<SetStateAction<Value | null>>;
 }
-
-// Custom overrides for "code" style.
-const styleMap = {
-  CODE: {
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
-    fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
-    fontSize: 16,
-    padding: 2
-  }
-};
 
 const RichEditor: FunctionComponent<EditorProps> = ({
-  setRawDraftConentState,
-  rawDraftConentState
+  value,
+  readOnly,
+  setValue
 }) => {
-  const [editorState, setEditorState] = useState(
-    EditorState.createWithContent(convertFromRaw(rawDraftConentState))
-  );
-  const editor = useRef<Editor | null>(null);
-  const plugins = [
-    dragNDropFileUploadPlugin,
-    blockDndPlugin,
-    focusPlugin,
-    alignmentPlugin,
-    resizeablePlugin,
-    imagePlugin
-  ];
-
-  function focus() {
-    (editor.current as Editor).focus();
-  }
-
-  function onChange(editorState: EditorState) {
-    setEditorState(editorState);
-    setRawDraftConentState(convertToRaw(editorState.getCurrentContent()));
-  }
-
-  function handleKeyCommand(
-    command: DraftEditorCommand,
-    editorState: EditorState
-  ): DraftHandleValue {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      onChange(newState);
-      return "handled";
-    }
-    return "not-handled";
-  }
-
-  function mapKeyToEditorCommand(e: KeyboardEvent) {
-    if (e.keyCode === 9 /* TAB */) {
-      const newEditorState = RichUtils.onTab(e, editorState, 4 /* maxDepth */);
-      if (newEditorState !== editorState) {
-        onChange(newEditorState);
-      }
-      return null;
-    }
-    return getDefaultKeyBinding(e);
-  }
-
-  function toggleBlockType(blockType: string) {
-    onChange(RichUtils.toggleBlockType(editorState, blockType));
-  }
-
-  function toggleInlineStyle(inlineStyle: string) {
-    onChange(RichUtils.toggleInlineStyle(editorState, inlineStyle));
-  }
-
-  function getBlockStyle(block: ContentBlock): string {
-    switch (block.getType()) {
-      case "blockquote":
-        return "RichEditor-blockquote";
-      default:
-        return "";
-    }
-  }
+  const cellPlugins = [slate(), image, video] as CellPlugin[];
+  const cellSpacing: CellSpacing = { x: 10, y: 10 };
 
   return (
-    <div className="RichEditor-root">
-      <BlockStyleControls
-        editorState={editorState}
-        onToggle={toggleBlockType}
+    <>
+      <Editor
+        value={value}
+        readOnly={readOnly}
+        onChange={setValue}
+        cellPlugins={cellPlugins}
+        cellSpacing={cellSpacing}
+        hideEditorSidebar={true}
       />
-      <InlineStyleControls
-        editorState={editorState}
-        onToggle={toggleInlineStyle}
-      />
-      <div
-        className={
-          "RichEditor-editor" + !editorState.getCurrentContent().hasText() &&
-          editorState.getCurrentContent().getBlockMap().first().getType() !==
-            "unstyled"
-            ? " RichEditor-hidePlaceholder"
-            : ""
+      <style jsx>{`
+        .react-page-cell-insert-new {
+          width: 95vw;
         }
-        onClick={focus}>
-        <Editor
-          editorKey="editor"
-          blockStyleFn={getBlockStyle}
-          customStyleMap={styleMap}
-          editorState={editorState}
-          handleKeyCommand={handleKeyCommand}
-          keyBindingFn={mapKeyToEditorCommand}
-          onChange={onChange}
-          ref={editor}
-          spellCheck={true}
-          plugins={plugins}
-        />
-        <AlignmentTool />
-      </div>
-    </div>
-  );
-};
-
-interface StyleButtonProps {
-  onToggle: (style: string) => void;
-  style: string;
-  active: boolean;
-  label: string;
-}
-
-const StyleButton: FunctionComponent<StyleButtonProps> = ({
-  onToggle,
-  style,
-  active,
-  label
-}) => {
-  function handleToggle(e: MouseEvent) {
-    e.preventDefault();
-    onToggle(style);
-  }
-
-  return (
-    <span
-      className={
-        active
-          ? "RichEditor-styleButton RichEditor-activeButton"
-          : "RichEditor-styleButton"
-      }
-      onMouseDown={handleToggle}>
-      {label}
-    </span>
-  );
-};
-
-interface StyleControlsProps {
-  editorState: EditorState;
-  onToggle: (style: string) => void;
-}
-
-const BlockStyleControls: FunctionComponent<StyleControlsProps> = ({
-  editorState,
-  onToggle
-}) => {
-  const BLOCK_TYPES = [
-    { label: "H1", style: "header-one" },
-    { label: "H2", style: "header-two" },
-    { label: "H3", style: "header-three" },
-    { label: "H4", style: "header-four" },
-    { label: "H5", style: "header-five" },
-    { label: "H6", style: "header-six" },
-    { label: "Blockquote", style: "blockquote" },
-    { label: "UL", style: "unordered-list-item" },
-    { label: "OL", style: "ordered-list-item" },
-    { label: "Code Block", style: "code-block" }
-  ];
-  const selection = editorState.getSelection();
-  const blockType = editorState
-    .getCurrentContent()
-    .getBlockForKey(selection.getStartKey())
-    .getType();
-
-  return (
-    <div className="RichEditor-controls">
-      {BLOCK_TYPES.map((type) => (
-        <StyleButton
-          key={type.label}
-          active={type.style === blockType}
-          label={type.label}
-          onToggle={onToggle}
-          style={type.style}
-        />
-      ))}
-    </div>
-  );
-};
-
-const InlineStyleControls: FunctionComponent<StyleControlsProps> = ({
-  editorState,
-  onToggle
-}) => {
-  const INLINE_STYLES = [
-    { label: "Bold", style: "BOLD" },
-    { label: "Italic", style: "ITALIC" },
-    { label: "Underline", style: "UNDERLINE" },
-    { label: "Monospace", style: "CODE" }
-  ];
-  const currentStyle = editorState.getCurrentInlineStyle();
-
-  return (
-    <div className="RichEditor-controls">
-      {INLINE_STYLES.map((type) => (
-        <StyleButton
-          key={type.label}
-          active={currentStyle.has(type.style)}
-          label={type.label}
-          onToggle={onToggle}
-          style={type.style}
-        />
-      ))}
-    </div>
+      `}</style>
+    </>
   );
 };
 
