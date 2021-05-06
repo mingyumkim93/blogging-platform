@@ -31,6 +31,7 @@ const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
   function addNewContent() {
     const newContentsDraft = [...contentsDraft, { "New item": null }];
     setContentsDraft(newContentsDraft);
+    setExpandedContents((prev) => [...prev, newContentsDraft.length - 1]);
   }
 
   return (
