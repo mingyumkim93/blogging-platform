@@ -30,21 +30,22 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
   handleAccordionClick
 }) => {
   const { updateMyBlogContent } = useFirebase().auth;
-  const [contentTitleDraft, setContentTitleDraft] = useState(
-    Object.keys(content)[0]
-  );
-  const [value, setValue] = useState<Value | null>(Object.values(content)[0]);
+  const [contentTitleDraft, setContentTitleDraft] = useState(content.title);
+  const [value, setValue] = useState<Value | null>(content.value);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   function updateContent(index: number) {
-    updateMyBlogContent({ [contentTitleDraft]: value }, index);
+    updateMyBlogContent(
+      { title: contentTitleDraft, value, isSaved: true, updatedAt: new Date() },
+      index
+    );
     handleAccordionClick(index);
   }
 
   function handleCancel(index: number) {
-    setContentTitleDraft(Object.keys(content)[0]);
+    setContentTitleDraft(content.title);
     handleAccordionClick(index);
-    setValue(Object.values(content)[0]);
+    setValue(content.value);
   }
 
   function deleteContent(index: number) {
@@ -67,7 +68,7 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
         <AccordionSummary
           onClick={() => handleAccordionClick(index)}
           expandIcon={<ExpandMore />}>
-          <Typography>{Object.keys(content)}</Typography>
+          <Typography>{content.title}</Typography>
         </AccordionSummary>
       )}
       <AccordionDetails>
@@ -75,7 +76,9 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
       </AccordionDetails>
       <Button onClick={() => updateContent(index)}>Save</Button>
       <Button onClick={() => handleCancel(index)}>Cancel</Button>
-      <Button onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
+      {content.isSaved && (
+        <Button onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
+      )}
 
       <Dialog
         open={deleteDialogOpen}

@@ -93,7 +93,7 @@ const Blog: Page<Props> = ({ blogData }) => {
                   setActiveList(index);
                   setMobileOpen(false);
                 }}>
-                <ListItemText primary={Object.keys(content)} />
+                <ListItemText primary={content.title} />
               </ListItem>
             );
           })
@@ -154,7 +154,7 @@ const Blog: Page<Props> = ({ blogData }) => {
         <div className={classes.toolbar} />
         {blogData.contents ? (
           <RichEditor
-            value={Object.values(blogData.contents[activeList])[0] || null}
+            value={blogData.contents[activeList].value}
             readOnly={true}
           />
         ) : (
