@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import CollapseProps from "types/CollapseProps";
 import BlogContentEditAccordion from "components/BlogContentEditAccordion";
 import BlogContent from "types/BlogContent";
+import { v4 as uuidv4 } from "uuid";
 
 const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
   opened,
@@ -15,42 +16,45 @@ const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
   const [contentsDraft, setContentsDraft] = useState<BlogContent[]>(
     contents || []
   );
-  const [expandedContents, setExpandedContents] = useState<number[]>([]);
-  function handleCancel() {
-    cancel();
-  }
+  const [expandedContents, setExpandedContents] = useState<string[]>([]);
 
-  function handleAccordionClick(index: number) {
+  function handleAccordionClick(id: string) {
     setExpandedContents((prev) => {
-      if (prev.includes(index))
-        return prev.filter((expandedIndex) => expandedIndex !== index);
-      return [...prev, index];
+      if (prev.includes(id))
+        return prev.filter((expandedId) => expandedId !== id);
+      return [...prev, id];
     });
   }
 
   function addNewContent() {
+    const id = uuidv4();
     const newContentsDraft: BlogContent[] = [
       ...contentsDraft,
-      { title: "New item", value: null }
+      { id, title: "New item", value: null }
     ];
     setContentsDraft(newContentsDraft);
-    setExpandedContents((prev) => [...prev, newContentsDraft.length - 1]);
+    setExpandedContents((prev) => [...prev, id]);
+  }
+
+  function removeNotSavedContent(id: string) {
+    const remain = contentsDraft.filter((content) => content.id !== id);
+    setContentsDraft(remain);
   }
 
   return (
     <Collapse in={opened}>
       {contentsDraft &&
-        contentsDraft.map((content, index) => (
+        contentsDraft.map((content) => (
           <BlogContentEditAccordion
-            key={index}
+            key={content.id}
             content={content}
-            expanded={expandedContents.includes(index)}
+            expanded={expandedContents.includes(content.id)}
             handleAccordionClick={handleAccordionClick}
-            index={index}
+            removeNotSavedContent={removeNotSavedContent}
           />
         ))}
       <Button onClick={addNewContent}>Add new</Button>
-      <Button onClick={handleCancel}>Cancel</Button>
+      <Button onClick={() => cancel()}>Cancel</Button>
     </Collapse>
   );
 };

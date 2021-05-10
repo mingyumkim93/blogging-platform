@@ -17,45 +17,51 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 interface Props {
-  index: number;
   content: BlogContent;
   expanded: boolean;
-  handleAccordionClick: (index: number) => void;
+  handleAccordionClick: (id: string) => void;
+  removeNotSavedContent: (id: string) => void;
 }
 
 const BlogContentEditAccordion: FunctionComponent<Props> = ({
-  index,
   content,
   expanded,
-  handleAccordionClick
+  handleAccordionClick,
+  removeNotSavedContent
 }) => {
   const { updateMyBlogContent } = useFirebase().auth;
   const [contentTitleDraft, setContentTitleDraft] = useState(content.title);
   const [value, setValue] = useState<Value | null>(content.value);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  function updateContent(index: number) {
-    updateMyBlogContent(
-      { title: contentTitleDraft, value, isSaved: true, updatedAt: new Date() },
-      index
-    );
-    handleAccordionClick(index);
+  function updateContent() {
+    updateMyBlogContent({
+      id: content.id,
+      title: contentTitleDraft,
+      value,
+      isSaved: true,
+      updatedAt: new Date()
+    });
+    handleAccordionClick(content.id);
   }
 
-  function handleCancel(index: number) {
-    setContentTitleDraft(content.title);
-    handleAccordionClick(index);
-    setValue(content.value);
+  function handleCancel() {
+    if (!content.isSaved) removeNotSavedContent(content.id);
+    else {
+      setContentTitleDraft(content.title);
+      handleAccordionClick(content.id);
+      setValue(content.value);
+    }
   }
 
-  function deleteContent(index: number) {
-    console.log("delete", index);
+  function deleteContent() {
+    console.log("delete");
     //TODO: delete content
     setDeleteDialogOpen(false);
   }
 
   return (
-    <Accordion key={index} expanded={expanded}>
+    <Accordion expanded={expanded}>
       {expanded ? (
         <AccordionSummary>
           <TextField
@@ -66,7 +72,7 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
         </AccordionSummary>
       ) : (
         <AccordionSummary
-          onClick={() => handleAccordionClick(index)}
+          onClick={() => handleAccordionClick(content.id)}
           expandIcon={<ExpandMore />}>
           <Typography>{content.title}</Typography>
         </AccordionSummary>
@@ -74,8 +80,8 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
       <AccordionDetails>
         <RichEditor value={value} setValue={setValue} />
       </AccordionDetails>
-      <Button onClick={() => updateContent(index)}>Save</Button>
-      <Button onClick={() => handleCancel(index)}>Cancel</Button>
+      <Button onClick={() => updateContent()}>Save</Button>
+      <Button onClick={() => handleCancel()}>Cancel</Button>
       {content.isSaved && (
         <Button onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
       )}
@@ -92,7 +98,7 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => deleteContent(index)} color="primary">
+          <Button onClick={() => deleteContent()} color="primary">
             Delete
           </Button>
           <Button

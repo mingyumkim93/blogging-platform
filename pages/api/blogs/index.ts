@@ -15,7 +15,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       await blogsRef.doc(uid).set({
         url: blogUrl,
         name: blogName,
-        created: new Date().toISOString()
+        created: new Date().toISOString(),
+        contents: []
       });
       res.status(200).json(uid);
     }

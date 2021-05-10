@@ -4,5 +4,5 @@ export default interface BlogData {
   created: string;
   name: string;
   url: string;
-  contents?: BlogContent[];
+  contents: BlogContent[];
 }

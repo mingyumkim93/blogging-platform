@@ -33,10 +33,7 @@ interface FirebaseContext {
     updateProfilePhoto: (photo: File | null) => Promise<void>;
     updateMyBlogName: (newName: string) => Promise<void>;
     updateMyBlogUrl: (newUrl: string) => Promise<void>;
-    updateMyBlogContent: (
-      newContent: BlogContent,
-      index: number
-    ) => Promise<void>;
+    updateMyBlogContent: (newContent: BlogContent) => Promise<void>;
   };
   db: {
     createBlog: (blogName: string, blogUrl: string) => Promise<AxiosResponse>;
@@ -238,11 +235,10 @@ function useProvideFirebase() {
       .then(() => handleUser(firebase.auth().currentUser));
   }
 
-  async function updateMyBlogContent(newContent: BlogContent, index: number) {
+  async function updateMyBlogContent(newContent: BlogContent) {
     return axios
       .put("/api/blogs/update-blog-content", {
         newContent,
-        index,
         uid: user!.uid
       })
       .then(() => handleUser(firebase.auth().currentUser));
