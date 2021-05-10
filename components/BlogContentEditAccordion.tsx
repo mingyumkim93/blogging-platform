@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -38,6 +38,8 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
   const [contentTitleDraft, setContentTitleDraft] = useState(content.title);
   const [value, setValue] = useState<Value | null>(content.value);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [hasBeenModified, setHasBeenModified] = useState(false);
 
   function handleSave() {
     const savingContent = {
@@ -58,6 +60,8 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
       handleAccordionClick(content.id);
       setValue(content.value);
     }
+    setCancelDialogOpen(false);
+    setHasBeenModified(false);
   }
 
   function deleteContent() {
@@ -72,7 +76,10 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
           <TextField
             fullWidth
             value={contentTitleDraft}
-            onChange={(e) => setContentTitleDraft(e.target.value)}
+            onChange={(e) => {
+              setContentTitleDraft(e.target.value);
+              setHasBeenModified(true);
+            }}
           />
         </AccordionSummary>
       ) : (
@@ -83,10 +90,21 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
         </AccordionSummary>
       )}
       <AccordionDetails>
-        <RichEditor value={value} setValue={setValue} />
+        <RichEditor
+          value={value}
+          onChange={(v: Value) => {
+            setValue(v);
+            setHasBeenModified(true && expanded);
+          }}
+        />
       </AccordionDetails>
       <Button onClick={() => handleSave()}>Save</Button>
-      <Button onClick={() => handleCancel()}>Cancel</Button>
+      <Button
+        onClick={() =>
+          hasBeenModified ? setCancelDialogOpen(true) : handleCancel()
+        }>
+        Cancel
+      </Button>
       {content.isSaved && (
         <Button onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
       )}
@@ -111,6 +129,31 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
             color="primary"
             autoFocus>
             Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={cancelDialogOpen}
+        onClose={() => setCancelDialogOpen(false)}>
+        <DialogTitle id="alert-dialog-title">
+          Cancel Editing content of {contentTitleDraft}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to cancel editing? Unsaved changes will be
+            disappeared.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleCancel()} color="primary">
+            Yes
+          </Button>
+          <Button
+            onClick={() => setCancelDialogOpen(false)}
+            color="primary"
+            autoFocus>
+            Continue Editing
           </Button>
         </DialogActions>
       </Dialog>

@@ -8,13 +8,13 @@ import video from "@react-page/plugins-video";
 interface EditorProps {
   value: Value | null;
   readOnly?: boolean;
-  setValue?: Dispatch<SetStateAction<Value | null>>;
+  onChange?: (v: Value) => void;
 }
 
 const RichEditor: FunctionComponent<EditorProps> = ({
   value,
   readOnly,
-  setValue
+  onChange
 }) => {
   const cellPlugins = [slate(), image, video] as CellPlugin[];
   const cellSpacing: CellSpacing = { x: 10, y: 10 };
@@ -24,7 +24,7 @@ const RichEditor: FunctionComponent<EditorProps> = ({
       <Editor
         value={value}
         readOnly={readOnly}
-        onChange={setValue}
+        onChange={onChange}
         cellPlugins={cellPlugins}
         cellSpacing={cellSpacing}
         hideEditorSidebar={true}
