@@ -21,27 +21,33 @@ interface Props {
   expanded: boolean;
   handleAccordionClick: (id: string) => void;
   removeNotSavedContent: (id: string) => void;
+  saveNewContent: (content: BlogContent) => void;
+  deleteSavedContent: (id: string) => void;
+  updateSavedContent: (contnet: BlogContent) => void;
 }
 
 const BlogContentEditAccordion: FunctionComponent<Props> = ({
   content,
   expanded,
   handleAccordionClick,
-  removeNotSavedContent
+  removeNotSavedContent,
+  saveNewContent,
+  deleteSavedContent,
+  updateSavedContent
 }) => {
-  const { updateMyBlogContent } = useFirebase().auth;
   const [contentTitleDraft, setContentTitleDraft] = useState(content.title);
   const [value, setValue] = useState<Value | null>(content.value);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  function updateContent() {
-    updateMyBlogContent({
-      id: content.id,
+  function handleSave() {
+    const savingContent = {
+      ...content,
       title: contentTitleDraft,
       value,
-      isSaved: true,
-      updatedAt: new Date()
-    });
+      isSaved: true
+    };
+    if (content.isSaved) updateSavedContent(savingContent);
+    else saveNewContent(savingContent);
     handleAccordionClick(content.id);
   }
 
@@ -55,8 +61,7 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
   }
 
   function deleteContent() {
-    console.log("delete");
-    //TODO: delete content
+    deleteSavedContent(content.id);
     setDeleteDialogOpen(false);
   }
 
@@ -80,7 +85,7 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
       <AccordionDetails>
         <RichEditor value={value} setValue={setValue} />
       </AccordionDetails>
-      <Button onClick={() => updateContent()}>Save</Button>
+      <Button onClick={() => handleSave()}>Save</Button>
       <Button onClick={() => handleCancel()}>Cancel</Button>
       {content.isSaved && (
         <Button onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
