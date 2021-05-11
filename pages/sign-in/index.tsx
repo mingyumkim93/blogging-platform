@@ -4,8 +4,37 @@ import Page from "types/Page";
 import { useState } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
 import { useRouter } from "next/router";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Avatar from "@material-ui/core/Avatar";
+import Typography from "@material-ui/core/Typography";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    paper: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center"
+    },
+    form: {
+      width: "100%",
+      marginTop: theme.spacing(1)
+    },
+    avatar: {
+      margin: theme.spacing(1),
+      backgroundColor: theme.palette.secondary.main
+    },
+    submit: {
+      margin: theme.spacing(3, 0, 2)
+    },
+    googleButton: { direction: "rtl" }
+  })
+);
 
 const SignIn: Page = () => {
+  const classes = useStyles();
   const { user, signin, signinWithGoogle } = useFirebase().auth;
   const router = useRouter();
 
@@ -30,18 +59,47 @@ const SignIn: Page = () => {
         <title>sign-in</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <input
-        type="text"
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <button onClick={() => handleSignIn()}>Sign in</button>
-      <button onClick={() => signinWithGoogle()}>Sign in with Google</button>
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <form className={classes.form} noValidate>
+          <TextField
+            autoFocus
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          />
+          <TextField
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
+          <Button
+            type="submit"
+            color="primary"
+            variant="contained"
+            className={classes.submit}
+            onClick={() => handleSignIn()}
+            fullWidth>
+            Sign in
+          </Button>
+          <div className={classes.googleButton}>
+            <Button onClick={() => signinWithGoogle()}>
+              Sign in with Google
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -4,8 +4,37 @@ import Page from "types/Page";
 import { useState } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
 import { useRouter } from "next/router";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+
+import Avatar from "@material-ui/core/Avatar";
+import Typography from "@material-ui/core/Typography";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    paper: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center"
+    },
+    form: {
+      width: "100%",
+      marginTop: theme.spacing(1)
+    },
+    avatar: {
+      margin: theme.spacing(1),
+      backgroundColor: theme.palette.secondary.main
+    },
+    submit: {
+      margin: theme.spacing(3, 0, 2)
+    }
+  })
+);
 
 const SignUp: Page = () => {
+  const classes = useStyles();
   const { auth } = useFirebase();
   const router = useRouter();
 
@@ -32,22 +61,51 @@ const SignUp: Page = () => {
         <title>sign-up</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <input
-        type="text"
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <input
-        type="text"
-        onChange={(e) => setDisplayName(e.target.value)}
-        placeholder="Name"
-      />
-      <button onClick={() => signUp()}>Submit</button>
+
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign up
+        </Typography>
+        <form className={classes.form} noValidate>
+          <TextField
+            autoFocus
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          />
+          <TextField
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
+          <TextField
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            type="text"
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="Name"
+          />
+          <Button
+            type="submit"
+            color="primary"
+            variant="contained"
+            className={classes.submit}
+            onClick={() => signUp()}
+            fullWidth>
+            Sign up
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };
