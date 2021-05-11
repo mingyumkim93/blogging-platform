@@ -17,13 +17,15 @@ const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
   const [expandedContents, setExpandedContents] = useState<string[]>([]);
 
   useEffect(() => {
-    const unsavedContents = contentsDraft.filter(
-      (content) =>
-        !content.isSaved &&
-        !contents.some((savedContent) => savedContent.id === content.id)
-    );
+    if (contentsDraft) {
+      const unsavedContents = contentsDraft.filter(
+        (content) =>
+          !content.isSaved &&
+          !contents.some((savedContent) => savedContent.id === content.id)
+      );
 
-    setContentsDraft([...contents, ...unsavedContents]);
+      setContentsDraft([...contents, ...unsavedContents]);
+    }
   }, [contents]);
 
   function handleAccordionClick(id: string) {

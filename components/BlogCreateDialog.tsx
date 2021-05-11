@@ -47,6 +47,7 @@ const BlogCreateDialog: FunctionComponent<Props> = ({ open, setOpen }) => {
   async function handleCreate() {
     createBlog(blogName, blogUrl)
       .then(() => {
+        console.log("????????");
         setOpen(false);
         router.push("/edit-blog");
       })

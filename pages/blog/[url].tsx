@@ -82,7 +82,7 @@ const Blog: Page<Props> = ({ blogData }) => {
       <div className={classes.toolbar} />
       <Divider />
       <List>
-        {blogData.contents ? (
+        {blogData.contents[activeList] ? (
           blogData.contents.map((content, index) => {
             return (
               <ListItem
@@ -154,7 +154,11 @@ const Blog: Page<Props> = ({ blogData }) => {
         <div className={classes.toolbar} />
         {blogData.contents ? (
           <RichEditor
-            value={blogData.contents[activeList].value}
+            value={
+              blogData.contents[activeList]
+                ? blogData.contents[activeList].value
+                : null
+            }
             readOnly={true}
           />
         ) : (

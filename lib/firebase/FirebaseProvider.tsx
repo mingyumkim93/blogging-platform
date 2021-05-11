@@ -36,7 +36,7 @@ interface FirebaseContext {
     updateMyBlogContents: (newContents: BlogContent[]) => Promise<void>;
   };
   db: {
-    createBlog: (blogName: string, blogUrl: string) => Promise<AxiosResponse>;
+    createBlog: (blogName: string, blogUrl: string) => Promise<void>;
   };
   storage: {
     addPhoto: (
@@ -254,7 +254,9 @@ function useProvideFirebase() {
   }
 
   async function createBlog(blogName: string, blogUrl: string) {
-    return axios.post("/api/blogs", { uid: user?.uid, blogName, blogUrl });
+    return axios
+      .post("/api/blogs", { uid: user?.uid, blogName, blogUrl })
+      .then(() => handleUser(firebase.auth().currentUser));
   }
 
   // Subscribe to user on mount
