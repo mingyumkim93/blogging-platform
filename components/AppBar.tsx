@@ -78,7 +78,7 @@ const Navbar: FunctionComponent = () => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar>
         <Toolbar>
           <Link href="/">
             <IconButton
