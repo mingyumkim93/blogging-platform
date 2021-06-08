@@ -1,5 +1,5 @@
 import admin, { ServiceAccount } from "firebase-admin";
-
+console.log("??? ", process.env.SERVICE_ACCOUNT_PRIVATE_KEY);
 const serviceAccount =
   process.env.NODE_ENV === "production"
     ? {
@@ -7,10 +7,7 @@ const serviceAccount =
         project_id: process.env.NEXT_PUBLIC_SERVICE_ACCOUNT_PROJECT_ID,
         private_key_id: process.env.NEXT_PUBLIC_SERVICE_ACCOUNT_PRIVATE_KEY_ID,
         private_key: (process.env
-          .NEXT_PUBLIC_SERVICE_ACCOUNT_PRIVATE_KEY as string).replace(
-          /\\n/g,
-          "\n"
-        ),
+          .SERVICE_ACCOUNT_PRIVATE_KEY as string).replace(/\\n/g, "\n"),
         client_email: process.env.NEXT_PUBLIC_SERVICE_ACCOUNT_CLIENT_EMAIL,
         client_id: process.env.NEXT_PUBLIC_SERVICE_ACCOUNT_CLIENT_ID,
         auth_uri: process.env.NEXT_PUBLIC_SERVICE_ACCOUNT_AUTH_URI,
