@@ -3,7 +3,7 @@ import "firebase/auth";
 import "firebase/storage";
 
 console.log("api key: ", process.env.FIREBASE_API_KEY);
-console.log("test key: ", process.env.TEST);
+console.log("test key: ", process.env.NEXT_PUBLIC_TEST);
 if (!firebase.apps.length) {
   firebase.initializeApp({
     apiKey: process.env.FIREBASE_API_KEY,
