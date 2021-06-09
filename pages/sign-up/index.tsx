@@ -96,7 +96,6 @@ const SignUp: Page = () => {
             placeholder="Name"
           />
           <Button
-            type="submit"
             color="primary"
             variant="contained"
             className={classes.submit}

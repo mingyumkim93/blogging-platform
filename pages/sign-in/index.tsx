@@ -85,7 +85,6 @@ const SignIn: Page = () => {
             placeholder="Password"
           />
           <Button
-            type="submit"
             color="primary"
             variant="contained"
             className={classes.submit}
