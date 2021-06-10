@@ -185,7 +185,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     .where("url", "==", url)
     .get();
   const blogData = querySnapshot.docs[0].data() as BlogData;
-  return { props: { blogData } };
+  return { props: { blogData }, revalidate: 5 };
 };
 
 export default Blog;
