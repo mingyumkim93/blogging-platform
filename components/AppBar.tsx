@@ -56,7 +56,7 @@ const Navbar: FunctionComponent = () => {
 
   function handleViewMyBlogClick() {
     handleClose();
-    checkBlogExistAndProceed("/blog/" + user?.blogData?.url);
+    checkBlogExistAndProceed("/blog/" + user?.blogData?.url, true);
   }
 
   function handleEditMyBlogClick() {
@@ -64,10 +64,10 @@ const Navbar: FunctionComponent = () => {
     checkBlogExistAndProceed("/edit-blog");
   }
 
-  function checkBlogExistAndProceed(route: string) {
+  function checkBlogExistAndProceed(route: string, newWindow?: boolean) {
     if (!user?.blogData) setBlogCreateDialogOpen(true);
     else {
-      router.push(route);
+      newWindow ? window.open(route) : router.push(route);
     }
   }
 
