@@ -22,6 +22,7 @@ import {
 import Page from "types/Page";
 import BlogData from "types/BlogData";
 import RichEditor from "components/RichEditor";
+import {useRouter} from "next/router";
 
 const drawerWidth = 240;
 
@@ -72,6 +73,7 @@ const Blog: Page<Props> = ({ blogData }) => {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeList, setActiveList] = useState(0);
+  const router = useRouter();
 
   function handleDrawerToggle() {
     setMobileOpen(!mobileOpen);
@@ -103,6 +105,10 @@ const Blog: Page<Props> = ({ blogData }) => {
       </List>
     </div>
   );
+
+  if(router.isFallback){
+    return <div>Fallback loading...</div>
+  }
 
   return (
     <div className={classes.root}>
