@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
       }
     },
     activeList: {
-      backgroundColor: "yellow"
+      backgroundColor: "#d5def7"
     },
     // necessary for content to be below app bar
     toolbar: theme.mixins.toolbar,
