@@ -23,6 +23,7 @@ import Page from "types/Page";
 import BlogData from "types/BlogData";
 import RichEditor from "components/RichEditor";
 import { useRouter } from "next/router";
+import Loading from "components/Loading";
 
 const drawerWidth = 240;
 
@@ -80,7 +81,7 @@ const Blog: Page<Props> = ({ blogData }) => {
   }
 
   if (router.isFallback) {
-    return <div>Fallback loading...</div>;
+    return <Loading></Loading>;
   }
 
   const drawer = (
