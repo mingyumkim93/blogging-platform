@@ -1,15 +1,15 @@
 import Head from "next/head";
-import AppBarLayout from "components/layouts/AppBarLayout";
-import CustomListItem from "components/CustomListItem";
-import Page from "types/Page";
-import { useFirebase } from "lib/firebase/FirebaseProvider";
 import { useRouter } from "next/router";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import List from "@material-ui/core/List";
+import Page from "types/Page";
 import CustomListItemProps from "types/CustomListItemProps";
 import DisplayNameEditCollapse from "components/DisplayNameEditCollapse";
 import PasswordEditCollapse from "components/PasswordEditCollapse";
 import ProfilePhotoEditCollapse from "components/ProfilePhotoEditCollapse";
+import AppBarLayout from "components/layouts/AppBarLayout";
+import CustomListItem from "components/CustomListItem";
+import { useFirebase } from "lib/firebase/FirebaseProvider";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import List from "@material-ui/core/List";
 
 const Profile: Page = () => {
   const router = useRouter();

@@ -1,9 +1,19 @@
 import { FunctionComponent, useState, useEffect } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
+import CollapseProps from "types/CollapseProps";
 import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
-import CollapseProps from "types/CollapseProps";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    largeAvatar: {
+      width: theme.spacing(30),
+      height: theme.spacing(30)
+    }
+  })
+);
 
 const ProfilePhotoEditCollapse: FunctionComponent<CollapseProps> = ({
   opened,
@@ -15,6 +25,7 @@ const ProfilePhotoEditCollapse: FunctionComponent<CollapseProps> = ({
     user?.photoURL || ""
   );
   const [hasBeenSubmitted, setHasBeenSubmitted] = useState(false);
+  const classes = useStyles();
 
   useEffect(() => {
     if (!opened) {
@@ -60,7 +71,7 @@ const ProfilePhotoEditCollapse: FunctionComponent<CollapseProps> = ({
         accept="image/*"
         onChange={() => inputImage()}
       />
-      <Avatar src={imagePreviewData} variant="square" />
+      <Avatar src={imagePreviewData} className={classes.largeAvatar} />
       <Button onClick={() => emptyProfilePhoto()}>Empty</Button>
       <Button onClick={() => openImageInput()}>Find</Button>
       <Button disabled={hasBeenSubmitted} onClick={() => handleSubmit()}>

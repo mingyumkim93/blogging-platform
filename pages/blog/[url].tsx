@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { GetStaticProps, GetStaticPaths } from "next";
+import { useRouter } from "next/router";
 import firestore from "lib/firebase/firebase-admin/firestore";
+import Page from "types/Page";
+import BlogData from "types/BlogData";
+import RichEditor from "components/RichEditor";
+import Loading from "components/Loading";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
@@ -19,11 +24,6 @@ import {
   Theme,
   createStyles
 } from "@material-ui/core/styles";
-import Page from "types/Page";
-import BlogData from "types/BlogData";
-import RichEditor from "components/RichEditor";
-import { useRouter } from "next/router";
-import Loading from "components/Loading";
 
 const drawerWidth = 240;
 

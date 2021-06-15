@@ -1,9 +1,9 @@
 import { FunctionComponent, useState, useEffect } from "react";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
+import CollapseProps from "types/CollapseProps";
 import TextField from "@material-ui/core/TextField";
 import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
-import CollapseProps from "types/CollapseProps";
 
 const BlogUrlEditCollapse: FunctionComponent<CollapseProps> = ({
   opened,

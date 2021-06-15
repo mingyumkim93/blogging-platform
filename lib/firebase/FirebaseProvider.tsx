@@ -4,7 +4,7 @@ import User from "types/User";
 import BlogData from "types/BlogData";
 import BlogContent from "types/BlogContent";
 import { useRouter } from "next/router";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 interface FirebaseProviderProps {
   children: JSX.Element;
@@ -46,7 +46,6 @@ interface FirebaseContext {
   };
 }
 
-//TODO: Think about its location
 interface FirebaseAuthError {
   code: string;
   message: string;

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Dispatch, SetStateAction } from "react";
+import React, { FunctionComponent } from "react";
 import type { Value, CellSpacing, CellPlugin } from "@react-page/editor";
 import Editor from "@react-page/editor";
 import slate from "@react-page/plugins-slate";

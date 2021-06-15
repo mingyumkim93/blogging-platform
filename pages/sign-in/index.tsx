@@ -1,9 +1,9 @@
-import Head from "next/head";
-import AppBarLayout from "components/layouts/AppBarLayout";
-import Page from "types/Page";
 import { useState } from "react";
-import { useFirebase } from "lib/firebase/FirebaseProvider";
+import Head from "next/head";
 import { useRouter } from "next/router";
+import Page from "types/Page";
+import { useFirebase } from "lib/firebase/FirebaseProvider";
+import AppBarLayout from "components/layouts/AppBarLayout";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";

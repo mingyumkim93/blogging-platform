@@ -1,5 +1,5 @@
-import { FunctionComponent, useEffect, useState } from "react";
-import { useFirebase } from "lib/firebase/FirebaseProvider";
+import { FunctionComponent, useState } from "react";
+import BlogContent from "types/BlogContent";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Accordion from "@material-ui/core/Accordion";
@@ -8,7 +8,6 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import RichEditor from "components/RichEditor";
-import BlogContent from "types/BlogContent";
 import { Value } from "@react-page/editor";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -64,7 +63,7 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
     setHasBeenModified(false);
   }
 
-  function deleteContent() {
+  function handleDelete() {
     deleteSavedContent(content.id);
     setDeleteDialogOpen(false);
   }
@@ -121,7 +120,7 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => deleteContent()} color="primary">
+          <Button onClick={() => handleDelete()} color="primary">
             Delete
           </Button>
           <Button

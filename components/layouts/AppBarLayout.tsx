@@ -1,8 +1,8 @@
-import LayoutProps from "types/LayoutProps";
 import { FunctionComponent } from "react";
+import { useFirebase } from "lib/firebase/FirebaseProvider";
+import LayoutProps from "types/LayoutProps";
 import AppBar from "components/AppBar";
 import Loading from "components/Loading";
-import { useFirebase } from "lib/firebase/FirebaseProvider";
 
 const AppBarLayout: FunctionComponent<LayoutProps> = ({ children }) => {
   const { loading } = useFirebase().auth;
