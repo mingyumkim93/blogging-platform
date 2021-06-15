@@ -18,3 +18,8 @@ body {
 .react-page-plugins-content-image {
   border: 1px solid gray;
 }
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+}

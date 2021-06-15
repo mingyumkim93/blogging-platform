@@ -84,8 +84,10 @@ const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
             updateSavedContent={updateSavedContent}
           />
         ))}
-      <Button onClick={addNewContent}>Add new</Button>
-      <Button onClick={() => cancel()}>Cancel</Button>
+      <div className={"button-group"}>
+        <Button onClick={addNewContent}>Add new</Button>
+        <Button onClick={() => cancel()}>Cancel</Button>
+      </div>
     </Collapse>
   );
 };

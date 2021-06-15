@@ -97,16 +97,18 @@ const BlogContentEditAccordion: FunctionComponent<Props> = ({
           }}
         />
       </AccordionDetails>
-      <Button onClick={() => handleSave()}>Save</Button>
-      <Button
-        onClick={() =>
-          hasBeenModified ? setCancelDialogOpen(true) : handleCancel()
-        }>
-        Cancel
-      </Button>
-      {content.isSaved && (
-        <Button onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
-      )}
+      <div className={"button-group"}>
+        <Button onClick={() => handleSave()}>Save</Button>
+        <Button
+          onClick={() =>
+            hasBeenModified ? setCancelDialogOpen(true) : handleCancel()
+          }>
+          Cancel
+        </Button>
+        {content.isSaved && (
+          <Button onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
+        )}
+      </div>
 
       <Dialog
         open={deleteDialogOpen}

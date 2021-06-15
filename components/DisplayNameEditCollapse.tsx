@@ -29,13 +29,16 @@ const DisplayNameEditCollapse: FunctionComponent<CollapseProps> = ({
       <Input
         value={displayName}
         onChange={(e) => setDisplayName(e.target.value)}
+        fullWidth
       />
-      <Button
-        disabled={!displayName || displayName.length === 0}
-        onClick={() => handleSubmit()}>
-        Edit
-      </Button>
-      <Button onClick={() => cancel()}>Cancel</Button>
+      <div className={"button-group"}>
+        <Button
+          disabled={!displayName || displayName.length === 0}
+          onClick={() => handleSubmit()}>
+          Edit
+        </Button>
+        <Button onClick={() => cancel()}>Cancel</Button>
+      </div>
     </Collapse>
   );
 };

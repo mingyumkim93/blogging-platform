@@ -25,13 +25,19 @@ const BlogNameEditCollapse: FunctionComponent<CollapseProps> = ({
 
   return (
     <Collapse in={opened}>
-      <Input value={blogName} onChange={(e) => setBlogName(e.target.value)} />
-      <Button
-        disabled={!blogName || blogName.length === 0}
-        onClick={() => handleSubmit()}>
-        Edit
-      </Button>
-      <Button onClick={() => cancel()}>Cancel</Button>
+      <Input
+        value={blogName}
+        onChange={(e) => setBlogName(e.target.value)}
+        fullWidth
+      />
+      <div className={"button-group"}>
+        <Button
+          disabled={!blogName || blogName.length === 0}
+          onClick={() => handleSubmit()}>
+          Edit
+        </Button>
+        <Button onClick={() => cancel()}>Cancel</Button>
+      </div>
     </Collapse>
   );
 };

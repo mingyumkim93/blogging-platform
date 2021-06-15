@@ -72,12 +72,14 @@ const ProfilePhotoEditCollapse: FunctionComponent<CollapseProps> = ({
         onChange={() => inputImage()}
       />
       <Avatar src={imagePreviewData} className={classes.largeAvatar} />
-      <Button onClick={() => emptyProfilePhoto()}>Empty</Button>
-      <Button onClick={() => openImageInput()}>Find</Button>
-      <Button disabled={hasBeenSubmitted} onClick={() => handleSubmit()}>
-        Edit
-      </Button>
-      <Button onClick={() => cancel()}>Cancel</Button>
+      <div className={"button-group"}>
+        <Button onClick={() => emptyProfilePhoto()}>Empty</Button>
+        <Button onClick={() => openImageInput()}>Find</Button>
+        <Button disabled={hasBeenSubmitted} onClick={() => handleSubmit()}>
+          Edit
+        </Button>
+        <Button onClick={() => cancel()}>Cancel</Button>
+      </div>
     </Collapse>
   );
 };

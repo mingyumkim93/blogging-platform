@@ -69,10 +69,12 @@ const PasswordEditCollapse: FunctionComponent<CollapseProps> = ({
         value={newPasswordConfirm}
         onChange={(e) => setNewPasswordConfirm(e.target.value)}
       />
-      <Button disabled={!validatePassword()} onClick={() => handleSubmit()}>
-        Edit
-      </Button>
-      <Button onClick={() => cancel()}>Cancel</Button>
+      <div className={"button-group"}>
+        <Button disabled={!validatePassword()} onClick={() => handleSubmit()}>
+          Edit
+        </Button>
+        <Button onClick={() => cancel()}>Cancel</Button>
+      </div>
     </Collapse>
   );
 };
