@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useFirebase } from "lib/firebase/FirebaseProvider";
 import CustomListItemProps from "types/CustomListItemProps";
 import Page from "types/Page";
-import BlogUrlEditCollapse from "components/BlogUrlEditCollapse";
 import BlogContentsEditCollpase from "components/BlogContentsEditCollapse";
 import BlogNameEditCollapse from "components/BlogNameEditCollapse";
 import AppBarLayout from "components/layouts/AppBarLayout";
@@ -23,16 +22,14 @@ const EditBlog: Page = () => {
     const { blogData } = user;
     const listItems: CustomListItemProps[] = [
       {
+        primary: "URL",
+        secondary: blogData.url
+      },
+      {
         primary: "Blog name",
         secondary: blogData.name,
         selectable: true,
         collapse: BlogNameEditCollapse
-      },
-      {
-        primary: "URL",
-        secondary: blogData.url,
-        selectable: true,
-        collapse: BlogUrlEditCollapse
       },
       {
         primary: "Contents",
