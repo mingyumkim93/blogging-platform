@@ -6,11 +6,6 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-a {
-  text-decoration: none;
-  color: black;
-}
-
 .page-container {
   min-height: 100vh;
   padding: 0 0.5rem;
@@ -22,9 +17,4 @@ a {
 
 .react-page-plugins-content-image {
   border: 1px solid gray;
-}
-
-a {
-  text-decoration-line: underline;
-  color: blue;
 }
