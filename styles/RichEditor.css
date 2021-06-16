@@ -1,3 +1,7 @@
-.react-page-editable .react-page-cell-insert-new {
-  width: 95vw !important;
+.react-page-cell-insert-new {
+  width: 70vw !important;
+}
+
+.react-page-editable {
+  max-width: 70vw;
 }
