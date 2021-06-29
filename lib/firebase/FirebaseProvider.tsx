@@ -198,7 +198,7 @@ function useProvideFirebase() {
   async function updateProfilePhoto(photo: File | null) {
     const user = firebase.auth().currentUser;
     const storageRef = firebase.storage().ref(`photos/profile/${user!.uid}`);
-    //delete photo
+
     if (photo) {
       await storageRef.put(photo);
       const photoURL = (await storageRef.getDownloadURL()) as string;

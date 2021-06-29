@@ -6,6 +6,7 @@ import image from "@react-page/plugins-image";
 import video from "@react-page/plugins-video";
 import spacer from "@react-page/plugins-spacer";
 import background from "@react-page/plugins-background";
+import imageFilePlugin from "lib/react-page-plugins/imageFilePlugin";
 
 interface EditorProps {
   value: Value | null;
@@ -21,6 +22,7 @@ const RichEditor: FunctionComponent<EditorProps> = ({
   const cellPlugins = [
     slate(),
     image,
+    imageFilePlugin,
     video,
     spacer,
     background({})
@@ -34,6 +36,7 @@ const RichEditor: FunctionComponent<EditorProps> = ({
       onChange={onChange}
       cellPlugins={cellPlugins}
       cellSpacing={cellSpacing}
+      hideEditorSidebar={true}
     />
   );
 };
