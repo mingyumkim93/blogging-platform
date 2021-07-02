@@ -1,36 +1,46 @@
 import { CellPlugin } from "@react-page/editor";
-import React from "react";
+import React, { useState } from "react";
 import ImageRenderer from "components/ImageRenderer";
 import PhotoLibrary from "@material-ui/icons/PhotoLibrary";
 import Button from "@material-ui/core/Button";
 import { connectField, GuaranteedProps } from "uniforms";
 import ImageFilePluginData from "types/ImageFilePluginData";
+import { useFirebase } from "lib/firebase/FirebaseProvider";
 
 const imageFilePlugin: CellPlugin<ImageFilePluginData> = {
-  Renderer: ({ data }) => <ImageRenderer imageUrl={data.imageUrl} />,
+  Renderer: ({ data }) => <ImageRenderer imageURL={data.imageURL} />,
   id: "Image-plugin-id",
   title: "Image File",
   description: "Loads an image from a file",
   version: 1,
   controls: {
+    columnCount: 1,
     type: "autoform",
     schema: {
       properties: {
-        imageUrl: {
+        imageURL: {
           type: "string",
           uniforms: {
             component: connectField(({ onChange }: GuaranteedProps<string>) => {
+              const { uploadContentMedia } = useFirebase().auth;
+              const [isLoading, setIsLoading] = useState(false);
               function openImageInput() {
                 (
                   document.getElementById("image-input") as HTMLInputElement
                 ).click();
               }
 
-              function showImage(e: React.ChangeEvent<HTMLInputElement>) {
+              async function showImage(e: React.ChangeEvent<HTMLInputElement>) {
+                setIsLoading(true);
+                const contentId = localStorage.getItem("expanded-id");
                 const imageFile = e.target.files ? e.target.files[0] : null;
-                if (imageFile) {
-                  const imageUrl = URL.createObjectURL(imageFile);
-                  onChange(imageUrl);
+                if (imageFile && contentId) {
+                  const imageURL = await uploadContentMedia(
+                    imageFile,
+                    contentId
+                  );
+                  setIsLoading(false);
+                  onChange(imageURL);
                 }
               }
               return (
@@ -43,6 +53,7 @@ const imageFilePlugin: CellPlugin<ImageFilePluginData> = {
                     onChange={(e) => showImage(e)}
                   />
                   <Button
+                    disabled={isLoading}
                     fullWidth
                     variant="contained"
                     color="primary"
@@ -55,7 +66,7 @@ const imageFilePlugin: CellPlugin<ImageFilePluginData> = {
           }
         }
       },
-      required: ["imageUrl"]
+      required: ["imageURL"]
     }
   },
   icon: <PhotoLibrary />,

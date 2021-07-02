@@ -1,5 +1,5 @@
 type Data = {
-  imageUrl: string | undefined;
+  imageURL: string | undefined;
 };
 
 export default Data;

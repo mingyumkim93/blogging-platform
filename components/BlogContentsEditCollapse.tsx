@@ -14,7 +14,7 @@ const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
   const { user, updateMyBlogContents } = useFirebase().auth;
   const { contents } = user?.blogData!;
   const [contentsDraft, setContentsDraft] = useState<BlogContent[]>(contents);
-  const [expandedContents, setExpandedContents] = useState<string[]>([]);
+  const [expandedContent, setExpandedContent] = useState<string | null>(null);
 
   useEffect(() => {
     if (contentsDraft) {
@@ -28,11 +28,14 @@ const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
     }
   }, [contents]);
 
+  useEffect(() => {
+    localStorage.setItem("expanded-id", expandedContent || "");
+  }, [expandedContent]);
+
   function handleAccordionClick(id: string) {
-    setExpandedContents((prev) => {
-      if (prev.includes(id))
-        return prev.filter((expandedId) => expandedId !== id);
-      return [...prev, id];
+    setExpandedContent((prev) => {
+      if (prev === id) return null;
+      return id;
     });
   }
 
@@ -61,7 +64,7 @@ const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
       { id, title: "New item", value: null }
     ];
     setContentsDraft(newContentsDraft);
-    setExpandedContents((prev) => [...prev, id]);
+    setExpandedContent(id);
   }
 
   function removeNotSavedContent(id: string) {
@@ -76,7 +79,7 @@ const BlogContentsEditCollapse: FunctionComponent<CollapseProps> = ({
           <BlogContentEditAccordion
             key={content.id}
             content={content}
-            expanded={expandedContents.includes(content.id)}
+            expanded={expandedContent === content.id}
             handleAccordionClick={handleAccordionClick}
             removeNotSavedContent={removeNotSavedContent}
             saveNewContent={saveNewContent}

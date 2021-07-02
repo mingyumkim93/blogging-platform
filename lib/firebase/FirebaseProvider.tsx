@@ -33,6 +33,7 @@ interface FirebaseContext {
     updateProfilePhoto: (photo: File | null) => Promise<void>;
     updateMyBlogName: (newName: string) => Promise<void>;
     updateMyBlogContents: (newContents: BlogContent[]) => Promise<void>;
+    uploadContentMedia: (file: File, contentId: string) => Promise<string>;
   };
   db: {
     createBlog: (blogName: string, blogUrl: string) => Promise<void>;
@@ -215,6 +216,20 @@ function useProvideFirebase() {
     }
   }
 
+  async function uploadContentMedia(file: File, contentId: string) {
+    const storageRef = firebase.storage().ref(`media/${contentId}`);
+    const existingMedias = (await storageRef.listAll()).items;
+    const numOfFileToSave =
+      existingMedias.length === 0
+        ? 1
+        : parseInt(existingMedias.pop()!.fullPath.split("/").pop()!) + 1;
+    const newFilePath = `media/${contentId}/${numOfFileToSave}`;
+    const newFileRef = firebase.storage().ref(newFilePath);
+    await newFileRef.put(file);
+    const fileURL = (await newFileRef.getDownloadURL()) as string;
+    return fileURL;
+  }
+
   async function updateMyBlogName(newName: string) {
     return axios
       .put("/api/blogs/update-blog-name", {
@@ -271,7 +286,8 @@ function useProvideFirebase() {
       updatePassword,
       updateProfilePhoto,
       updateMyBlogName,
-      updateMyBlogContents
+      updateMyBlogContents,
+      uploadContentMedia
     },
     db: { createBlog },
     storage: {
