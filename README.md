@@ -1,4 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# blogging-platform web application created by Mingyum Kim
+
+## Introduction
+
+A web application for blogging.
+
+## Technologies
+
+- Next.js
+- Typescript
+- React-page/editor
+- Firebase 
+
+## How to use?
+
+Create your account and upload your text or photos. Try it here: https://blogging-platform.vercel.app/
+
+
+## If I had more time I whould...
+- trim UI
+- add testing
+- add more functionality for editing contents
 
 ## Getting Started
 
